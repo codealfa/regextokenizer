@@ -1,0 +1,19 @@
+{
+  "name": "codealfa/regextokenizer",
+  "description": "description",
+  "minimum-stability": "dev",
+  "license": "GPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Samuel Marshall",
+      "email": "sdmarshall73@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "CodeAlfa\\RegexTokenizer\\": "src/"
+    }
+  }}
