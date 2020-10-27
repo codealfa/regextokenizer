@@ -2,7 +2,8 @@
 
 namespace CodeAlfa\RegexTokenizer;
 
-trait Base {
+trait Base
+{
 
 	//language=RegExp
 	public static function DOUBLE_QUOTE_STRING_VALUE()
@@ -47,9 +48,9 @@ trait Base {
 	}
 
 	//language=RegExp
-	public static function STRING_CP($bCaptureValue=false)
+	public static function STRING_CP( $bCaptureValue = false )
 	{
-		return '[\'"`]' . self::captureValue(self::STRING_VALUE(), $bCaptureValue) . '[\'"`]';
+		return '[\'"`]' . self::captureValue( self::STRING_VALUE(), $bCaptureValue ) . '[\'"`]';
 	}
 
 	//language=RegExp
@@ -70,11 +71,23 @@ trait Base {
 		return '(?:' . self::BLOCK_COMMENT() . '|' . self::LINE_COMMENT() . ')';
 	}
 
-	private static function captureValue($sValue, $bCaptureValue, $bResetBranch=false)
+	protected static function throwExceptionOnPregError()
 	{
-		if($bCaptureValue)
+		$error = array_flip( array_filter( get_defined_constants( true )['pcre'], function ( $value ) {
+			return substr( $value, - 6 ) === '_ERROR';
+		}, ARRAY_FILTER_USE_KEY ) )[preg_last_error()];
+
+		if ( preg_last_error() != PREG_NO_ERROR )
 		{
-			if($bResetBranch)
+			throw new \Exception( $error );
+		}
+	}
+
+	private static function captureValue( $sValue, $bCaptureValue, $bResetBranch = false )
+	{
+		if ( $bCaptureValue )
+		{
+			if ( $bResetBranch )
 			{
 				return '(?|' . $sValue . ')';
 			}
@@ -85,7 +98,6 @@ trait Base {
 		return $sValue;
 
 	}
-
 
 
 }
