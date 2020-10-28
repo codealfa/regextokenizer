@@ -7,6 +7,12 @@ trait Css
 	Use Base;
 
 	//language=RegExp
+	public static function CSS_IDENT()
+	{
+		return '(?:\\\\.|[a-z0-9_-]++\s++)';
+	}
+
+	//language=RegExp
 	public static function CSS_URL_VALUE_UNQUOTED()
 	{
 		return '(?<=url\()(?>(?:\\\\.)?[^\\\\()\s\'"]*+)++';
