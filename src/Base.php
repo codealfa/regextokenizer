@@ -48,9 +48,11 @@ trait Base
 	}
 
 	//language=RegExp
-	public static function STRING_CP( $bCaptureValue = false )
+	public static function STRING_CP( $bCV = false )
 	{
-		return '[\'"`]' . self::captureValue( self::STRING_VALUE(), $bCaptureValue ) . '[\'"`]';
+		$sString = '[\'"`]<<' .  self::STRING_VALUE() . '>>[\'"`]';
+
+		return self::prepare($sString, $bCV);
 	}
 
 	//language=RegExp
@@ -83,21 +85,18 @@ trait Base
 		}
 	}
 
-	private static function captureValue( $sValue, $bCaptureValue, $bResetBranch = false )
+	private static function prepare($sRegex, $bCV)
 	{
-		if ( $bCaptureValue )
+		$aSearchArray = array('<<<', '>>>', '<<', '>>');
+
+		if ($bCV)
 		{
-			if ( $bResetBranch )
-			{
-				return '(?|' . $sValue . ')';
-			}
-
-			return '(' . $sValue . ')';
+			return str_replace($aSearchArray, array('(?|', ')', '(', ')'), $sRegex);
 		}
-
-		return $sValue;
-
+		else
+		{
+			return str_replace($aSearchArray, array('(?:', ')', '', ''), $sRegex);
+		}
 	}
-
 
 }

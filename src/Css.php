@@ -4,7 +4,7 @@ namespace CodeAlfa\RegexTokenizer;
 
 trait Css
 {
-	Use Base;
+	use Base;
 
 	//language=RegExp
 	public static function CSS_IDENT()
@@ -25,9 +25,11 @@ trait Css
 	}
 
 	//language=RegExp
-	public static function CSS_URL_CP($bCaptureValue=false)
+	public static function CSS_URL_CP( $bCV = false )
 	{
-		return 'url\([\'"]?' . self::captureValue(self::CSS_URL_VALUE(), $bCaptureValue) . '[\'"]?\)';
+		$sCssUrl = 'url\([\'"]?<<' . self::CSS_URL_VALUE() . '>>[\'"]?\)';
+
+		return self::prepare( $sCssUrl, $bCV );
 	}
 
 }

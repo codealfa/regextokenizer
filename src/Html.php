@@ -34,12 +34,14 @@ trait Html
 		//If we don't need to match a value then the value of attribute is optional
 		if ( $sMatchValue == '' )
 		{
-			return $sTag . '(?:\s*+=\s*+(?>' . $sDel . ')' . self::captureValue( self::HTML_ATTRIBUTE_VALUE(), $bCaptureValue ) . '[\'"]?)?';
+			$sAttribute = $sTag . '(?:\s*+=\s*+(?>' . $sDel . ')<<' .self::HTML_ATTRIBUTE_VALUE() . '>>[\'"]?)?';
 		}
 		else
 		{
-			return $sTag . '\s*+=\s*+(?>' . $sDel . ')' . $sMatchValue . self::captureValue( self::HTML_ATTRIBUTE_VALUE(), $bCaptureValue ) . '[\'"]?';
+			$sAttribute = $sTag . '\s*+=\s*+(?>' . $sDel . ')' . $sMatchValue . '<<' . self::HTML_ATTRIBUTE_VALUE() . '>>[\'"]?';
 		}
+
+		return self::prepare($sAttribute, $bCaptureValue);
 	}
 
 	//language=RegExp
