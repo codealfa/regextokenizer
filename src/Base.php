@@ -50,9 +50,9 @@ trait Base
 	//language=RegExp
 	public static function STRING_CP( $bCV = false )
 	{
-		$sString = '[\'"`]<<' .  self::STRING_VALUE() . '>>[\'"`]';
+		$sString = '[\'"`]<<' . self::STRING_VALUE() . '>>[\'"`]';
 
-		return self::prepare($sString, $bCV);
+		return self::prepare( $sString, $bCV );
 	}
 
 	//language=RegExp
@@ -73,29 +73,34 @@ trait Base
 		return '(?:' . self::BLOCK_COMMENT() . '|' . self::LINE_COMMENT() . ')';
 	}
 
-	protected static function throwExceptionOnPregError()
+	protected static function throwExceptionOnPregError( $sExceptionClassName = '' )
 	{
+		if ( $sExceptionClassName === '' )
+		{
+			$sExceptionClassName = 'Exception';
+		}
+
 		$error = array_flip( array_filter( get_defined_constants( true )['pcre'], function ( $value ) {
 			return substr( $value, - 6 ) === '_ERROR';
 		}, ARRAY_FILTER_USE_KEY ) )[preg_last_error()];
 
 		if ( preg_last_error() != PREG_NO_ERROR )
 		{
-			throw new \Exception( $error );
+			throw new $sExceptionClassName( $error );
 		}
 	}
 
-	private static function prepare($sRegex, $bCV)
+	private static function prepare( $sRegex, $bCV )
 	{
-		$aSearchArray = array('<<<', '>>>', '<<', '>>');
+		$aSearchArray = array( '<<<', '>>>', '<<', '>>' );
 
-		if ($bCV)
+		if ( $bCV )
 		{
-			return str_replace($aSearchArray, array('(?|', ')', '(', ')'), $sRegex);
+			return str_replace( $aSearchArray, array( '(?|', ')', '(', ')' ), $sRegex );
 		}
 		else
 		{
-			return str_replace($aSearchArray, array('(?:', ')', '', ''), $sRegex);
+			return str_replace( $aSearchArray, array( '(?:', ')', '', '' ), $sRegex );
 		}
 	}
 
