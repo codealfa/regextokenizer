@@ -58,7 +58,7 @@ trait Base
 	//language=RegExp
 	public static function BLOCK_COMMENT()
 	{
-		return '/\*(?>[^/*]++|//|\*(?!/)|(?<!\*)/)*+\*/';
+		return '/\*(?>\*?[^*]*+)*?\*/';
 	}
 
 	//language=RegExp
