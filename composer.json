@@ -16,4 +16,5 @@
     "psr-4": {
       "CodeAlfa\\RegexTokenizer\\": "src/"
     }
-  }}
+  }
+}
