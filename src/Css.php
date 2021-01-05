@@ -38,7 +38,7 @@ trait Css
 	//language=RegExp
 	public static function CSS_URL_CP( $bCV = false )
 	{
-		$sCssUrl = 'url\([\'"]?<<' . self::CSS_URL_VALUE() . '>>[\'"]?\)';
+		$sCssUrl = 'url\((?:\s*+[\'"])?<<' . self::CSS_URL_VALUE() . '>>(?:[\'"]\s*+)?\)';
 
 		return self::prepare( $sCssUrl, $bCV );
 	}
