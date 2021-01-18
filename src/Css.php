@@ -11,7 +11,7 @@
 
 namespace CodeAlfa\RegexTokenizer;
 
-##/*  defined('_JCH_EXEC') or die('Restricted access');  */##
+defined('_JCH_EXEC') or die('Restricted access');
 
 trait Css
 {
