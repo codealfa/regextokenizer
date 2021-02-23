@@ -26,7 +26,7 @@ trait Css
 	//language=RegExp
 	public static function CSS_URL_VALUE_UNQUOTED()
 	{
-		return '(?<=url\()(?>(?:\\\\.)?[^\\\\()\s\'"]*+)++';
+		return '(?<=url\()(?>\s*+(?:\\\\.)?[^\\\\()\s\'"]*+)++';
 	}
 
 	//language=RegExp
