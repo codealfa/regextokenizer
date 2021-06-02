@@ -26,7 +26,7 @@ trait Base
         //language=RegExp
         public static function DOUBLE_QUOTE_STRING_VALUE()
         {
-                return '(?<=")(?>(?:\\\\.)?[^\\\\"]*+)++';
+                return '(?>(?:\\\\.)?[^\\\\"]*+)+?';
         }
 
         //language=RegExp
@@ -38,7 +38,7 @@ trait Base
         //language=RegExp
         public static function SINGLE_QUOTE_STRING_VALUE()
         {
-                return "(?<=')(?>(?:\\\\.)?[^\\\\']*+)++";
+                return "(?>(?:\\\\.)?[^\\\\']*+)+?";
         }
 
         //language=RegExp
@@ -50,7 +50,7 @@ trait Base
         //language=RegExp
         public static function BACK_TICK_STRING_VALUE()
         {
-                return '(?<=`)(?>(?:\\\\.)?[^\\\\`]*+)++';
+                return '(?>(?:\\\\.)?[^\\\\`]*+)+?';
         }
 
         //language=RegExp
