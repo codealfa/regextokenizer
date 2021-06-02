@@ -11,37 +11,35 @@
 
 namespace CodeAlfa\RegexTokenizer;
 
-defined('_JCH_EXEC') or die('Restricted access');
-
 trait Css
 {
-	use Base;
+        use Base;
 
-	//language=RegExp
-	public static function CSS_IDENT()
-	{
-		return '(?:\\\\.|[a-z0-9_-]++\s++)';
-	}
+        //language=RegExp
+        public static function CSS_IDENT()
+        {
+                return '(?:\\\\.|[a-z0-9_-]++\s++)';
+        }
 
-	//language=RegExp
-	public static function CSS_URL_VALUE_UNQUOTED()
-	{
-		return '(?<=url\()(?>\s*+(?:\\\\.)?[^\\\\()\s\'"]*+)++';
-	}
+        //language=RegExp
+        public static function CSS_URL_CP( $bCV = false )
+        {
+                $sCssUrl = 'url\((?:\s*+[\'"])?<<' . self::CSS_URL_VALUE() . '>>(?:[\'"]\s*+)?\)';
 
-	//language=RegExp
-	public static function CSS_URL_VALUE()
-	{
-		return '(?:' . self::STRING_VALUE() . '|' . self::CSS_URL_VALUE_UNQUOTED() . ')';
-	}
+                return self::prepare( $sCssUrl, $bCV );
+        }
 
-	//language=RegExp
-	public static function CSS_URL_CP( $bCV = false )
-	{
-		$sCssUrl = 'url\((?:\s*+[\'"])?<<' . self::CSS_URL_VALUE() . '>>(?:[\'"]\s*+)?\)';
+        //language=RegExp
+        public static function CSS_URL_VALUE()
+        {
+                return '(?:' . self::STRING_VALUE() . '|' . self::CSS_URL_VALUE_UNQUOTED() . ')';
+        }
 
-		return self::prepare( $sCssUrl, $bCV );
-	}
+        //language=RegExp
+        public static function CSS_URL_VALUE_UNQUOTED()
+        {
+                return '(?<=url\()(?>\s*+(?:\\\\.)?[^\\\\()\s\'"]*+)++';
+        }
 
 }
 
