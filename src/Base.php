@@ -11,8 +11,12 @@
 
 namespace CodeAlfa\RegexTokenizer;
 
+use CodeAlfa\RegexTokenizer\Debug\Debug;
+
 trait Base
 {
+        use Debug;
+
         //language=RegExp
         public static function DOUBLE_QUOTE_STRING()
         {
