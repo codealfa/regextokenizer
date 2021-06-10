@@ -24,7 +24,7 @@ trait Css
         //language=RegExp
         public static function CSS_URL_CP( $bCV = false )
         {
-                $sCssUrl = 'url\((?:\s*+[\'"])?<<' . self::CSS_URL_VALUE() . '>>(?:[\'"]\s*+)?\)';
+                $sCssUrl = '(?:url\(|(?<=url)\()(?:\s*+[\'"])?<<' . self::CSS_URL_VALUE() . '>>(?:[\'"]\s*+)?\)';
 
                 return self::prepare( $sCssUrl, $bCV );
         }
