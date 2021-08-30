@@ -18,7 +18,7 @@ trait Html
         //language=RegExp
         public static function HTML_COMMENT()
         {
-                return '<!--(?>-?[^-]*+)*?-->';
+                return '<!--(?>-?[^-]*+)*?--!?>';
                 //return '(?:(?:<!--|(?<=[\s/^])-->)[^\r\n]*+)';
         }
 
