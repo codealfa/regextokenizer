@@ -11,6 +11,8 @@
 
 namespace CodeAlfa\RegexTokenizer\Debug;
 
+use JchOptimize\Core\Logger;
+
 /**
  * Trait Debug
  * @package CodeAlfa\RegexTokenizer\Debug
@@ -19,10 +21,12 @@ trait Debug
 {
 
 
-	public $_debug = false; /**DO NOT ENABLE on production sites!! **/
-	public $_regexNum = - 1;
+	public $_debug = false;
+	/**DO NOT ENABLE on production sites!! **/
+	public $_regexNum = -1;
 	public $_limit = 10.0;
 	public $_printCode = true;
+	protected $_ip = '';
 
 	public function _debug( $regex, $code, $regexNum = 0 )
 	{
@@ -43,19 +47,31 @@ trait Debug
 
 		$nstamp = microtime( true );
 		$time   = ( $nstamp - $pstamp ) * 1000;
+		/*
+				if ( $time > $this->_limit )
+				{
+					print 'num=' . $regexNum . "\n";
+					print 'time=' . $time . "\n\n";
 
-		if ( $time > $this->_limit )
+					if ( $this->_printCode )
+					{
+						print $regex . "\n";
+						print $code . "\n\n";
+					}
+				}
+		*/
+		if ( $this->_ip == $_SERVER['REMOTE_ADDR']
+			&& $time > $this->_limit )
 		{
-			print 'num=' . $regexNum . "\n";
-			print 'time=' . $time . "\n\n";
+			Logger::debug( $regexNum, 'num' );
+			Logger::debug( $time, 'time' );
 
 			if ( $this->_printCode )
 			{
-				print $regex . "\n";
-				print $code . "\n\n";
+				Logger::debug( $regex, 'regex' );
+				Logger::debug( $code, 'code' );
 			}
 		}
-
 
 		$pstamp = $nstamp;
 	}
