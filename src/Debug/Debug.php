@@ -11,15 +11,17 @@
 
 namespace CodeAlfa\RegexTokenizer\Debug;
 
-use JchOptimize\Core\Logger;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
- * Trait Debug
+ * Trait Debug To use the Debug trait you must add a PSR-3 compliant Logger to the class using this trait
+ *
  * @package CodeAlfa\RegexTokenizer\Debug
  */
 trait Debug
 {
-
+	use LoggerAwareTrait;
 
 	public $_debug = false;
 	/**DO NOT ENABLE on production sites!! **/
@@ -35,6 +37,11 @@ trait Debug
 			return false;
 		}
 
+		if ( is_null( $this->logger ) )
+		{
+			$this->setLogger( new NullLogger() );
+		}
+
 		/** @var float $pstamp */
 		static $pstamp = 0;
 
@@ -47,29 +54,18 @@ trait Debug
 
 		$nstamp = microtime( true );
 		$time   = ( $nstamp - $pstamp ) * 1000;
-		/*
-				if ( $time > $this->_limit )
-				{
-					print 'num=' . $regexNum . "\n";
-					print 'time=' . $time . "\n\n";
 
-					if ( $this->_printCode )
-					{
-						print $regex . "\n";
-						print $code . "\n\n";
-					}
-				}
-		*/
-		if ( $this->_ip == $_SERVER['REMOTE_ADDR']
-			&& $time > $this->_limit )
+		if ( $time > $this->_limit )
 		{
-			Logger::debug( $regexNum, 'num' );
-			Logger::debug( $time, 'time' );
+			$context = [ 'category' => 'Regextokenizer' ];
+
+			$this->logger->debug( $regexNum, $context );
+			$this->logger->debug( (string)$time, $context );
 
 			if ( $this->_printCode )
 			{
-				Logger::debug( $regex, 'regex' );
-				Logger::debug( $code, 'code' );
+				$this->logger->debug( $regex, $context );
+				$this->logger->debug( $code, $context );
 			}
 		}
 
