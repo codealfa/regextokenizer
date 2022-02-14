@@ -15,7 +15,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 
 /**
- * Trait Debug To use the Debug trait you must add a PSR-3 compliant Logger to the class using this trait
+ * Trait Debug  - To use the Debug trait you must add a PSR-3 compliant Logger to the class using this trait
  *
  * @package CodeAlfa\RegexTokenizer\Debug
  */
@@ -59,13 +59,13 @@ trait Debug
 		{
 			$context = [ 'category' => 'Regextokenizer' ];
 
-			$this->logger->debug( $regexNum, $context );
-			$this->logger->debug( (string)$time, $context );
+			$this->logger->debug( 'regexNum = ' . $regexNum, $context );
+			$this->logger->debug( 'time = ' . (string)$time, $context );
 
 			if ( $this->_printCode )
 			{
-				$this->logger->debug( $regex, $context );
-				$this->logger->debug( $code, $context );
+				$this->logger->debug( 'regex = ' . $regex, $context );
+				$this->logger->debug( 'code = ' . $code, $context );
 			}
 		}
 
