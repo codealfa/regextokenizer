@@ -23,10 +23,10 @@ trait Debug
 {
 	use LoggerAwareTrait;
 
-	public $_debug = false;
+	public $_debug = true;
 	/**DO NOT ENABLE on production sites!! **/
 	public $_regexNum = -1;
-	public $_limit = 10.0;
+	public $_limit = 1.0;
 	public $_printCode = true;
 	protected $_ip = '';
 
