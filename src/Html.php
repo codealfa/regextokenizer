@@ -22,6 +22,12 @@ trait Html
                 //return '(?:(?:<!--|(?<=[\s/^])-->)[^\r\n]*+)';
         }
 
+	//language=RegExp
+	public static function HTML_GENERIC_ELEMENT()
+	{
+		return '[a-z0-9]++';
+	}
+
         //language=RegExp
         public static function HTML_ATTRIBUTE_CP( $sAttrName = '', $bCaptureValue = false, $bCaptureDelimiter = false, $sMatchValue = '' )
         {
@@ -69,7 +75,7 @@ trait Html
         //language=RegExp
         public static function HTML_ELEMENT( $sElement = '', $bSelfClosing = false )
         {
-                $sName = $sElement != '' ? $sElement : '[a-z0-9]++';
+                $sName = $sElement != '' ? $sElement : self::HTML_GENERIC_ELEMENT();
                 $sTag  = '<' . $sName . '\b[^>]*+>';
 
                 if ( ! $bSelfClosing )
