@@ -62,8 +62,8 @@ trait Base
         }
 
         //language=RegExp
-        public static function STRING_VALUE()
-        {
+        public static function STRING_VALUE(): string
+	{
                 return '(?:' . self::DOUBLE_QUOTE_STRING_VALUE() . '|' . self::SINGLE_QUOTE_STRING_VALUE() . '|' . self::BACK_TICK_STRING_VALUE() . ')';
         }
 
