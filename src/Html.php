@@ -87,8 +87,14 @@ trait Html
 	}
 
 	//language=RegExp
-	public static function HTML_ELEMENT_SELF_CLOSING( $sElement = '' ): string
+	public static function HTML_ELEMENT_SELF_CLOSING( $element = '' ): string
 	{
-		return self::HTML_ELEMENT( $sElement, true );
+		return self::HTML_ELEMENT( $element, true );
+	}
+
+
+	protected static function parseAttributesStatic(): string
+	{
+		return '(?>' . self::HTML_ATTRIBUTE_CP() . '\s*+)*?';
 	}
 }
