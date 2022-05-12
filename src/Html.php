@@ -76,7 +76,7 @@ trait Html
 	public static function HTML_ELEMENT( $element = '', $isSelfClosing = false ): string
 	{
 		$name = $element != '' ? $element : self::HTML_GENERIC_ELEMENT();
-		$tag  = '<' . $name . '\b\s*+' . self::parseAttributesStatic() . '>';
+		$tag  = '<' . $name . '\b(?:\s++' . self::parseAttributesStatic() . ')?\s*+>';
 
 		if ( ! $isSelfClosing )
 		{
