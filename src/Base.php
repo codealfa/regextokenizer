@@ -18,37 +18,37 @@ trait Base
 	use Debug;
 
 	//language=RegExp
-	public static function DOUBLE_QUOTE_STRING()
+	public static function DOUBLE_QUOTE_STRING(): string
 	{
 		return '"' . self::DOUBLE_QUOTE_STRING_VALUE() . '(?:"|(?=$))';
 	}
 
 	//language=RegExp
-	public static function DOUBLE_QUOTE_STRING_VALUE()
+	public static function DOUBLE_QUOTE_STRING_VALUE(): string
 	{
 		return '(?<=")(?>(?:\\\\.)?[^\\\\"]*+)++';
 	}
 
 	//language=RegExp
-	public static function SINGLE_QUOTE_STRING()
+	public static function SINGLE_QUOTE_STRING(): string
 	{
 		return "'" . self::SINGLE_QUOTE_STRING_VALUE() . "(?:'|(?=$))";
 	}
 
 	//language=RegExp
-	public static function SINGLE_QUOTE_STRING_VALUE()
+	public static function SINGLE_QUOTE_STRING_VALUE(): string
 	{
 		return "(?<=')(?>(?:\\\\.)?[^\\\\']*+)++";
 	}
 
 	//language=RegExp
-	public static function BACK_TICK_STRING()
+	public static function BACK_TICK_STRING(): string
 	{
 		return '`' . self::BACK_TICK_STRING_VALUE() . '(?:`|(?=$))';
 	}
 
 	//language=RegExp
-	public static function BACK_TICK_STRING_VALUE()
+	public static function BACK_TICK_STRING_VALUE(): string
 	{
 		return '(?<=`)(?>(?:\\\\.)?[^\\\\`]*+)++';
 	}
@@ -83,18 +83,18 @@ trait Base
 	}
 
 	//language=RegExp
-	public static function COMMENT()
+	public static function COMMENT(): string
 	{
 		return '(?:' . self::BLOCK_COMMENT() . '|' . self::LINE_COMMENT() . ')';
 	}
 
 	//language=RegExp
-	public static function BLOCK_COMMENT()
+	public static function BLOCK_COMMENT(): string
 	{
 		return '/\*(?>\*?[^*]*+)*?\*/';
 	}
 
-	public static function LINE_COMMENT()
+	public static function LINE_COMMENT(): string
 	{
 		return '//[^\r\n]*+';
 	}
