@@ -15,31 +15,51 @@ trait Css
 {
     use Base;
 
+    /**
+     * Regex token for a CSS ident
+     *
+     * @return string
+     */
     //language=RegExp
-    public static function CSS_IDENT(): string
+    public static function cssIdentToken(): string
     {
         return '(?:\\\\.|[a-z0-9_-]++\s++)';
     }
 
+    /**
+     * Regex token for a CSS url, optionally capturing the value in a capture group
+     *
+     * @param   bool  $shouldCaptureValue Whether to capture the value in a capture group
+     *
+     * @return string
+     */
     //language=RegExp
-    public static function CSS_URL_CP($bCV = false)
+    public static function cssUrlWithCaptureValueToken(bool $shouldCaptureValue = false): string
     {
-        $sCssUrl = '(?:url\(|(?<=url)\()(?:\s*+[\'"])?<<' . self::CSS_URL_VALUE() . '>>(?:[\'"]\s*+)?\)';
+        $cssUrl = '(?:url\(|(?<=url)\()(?:\s*+[\'"])?<<' . self::cssUrlValueToken() . '>>(?:[\'"]\s*+)?\)';
 
-        return self::prepare($sCssUrl, $bCV);
+        return self::prepare($cssUrl, $shouldCaptureValue);
     }
 
+    /**
+     * Regex token for a CSS url value
+     *
+     * @return string
+     */
     //language=RegExp
-    public static function CSS_URL_VALUE(): string
+    public static function cssUrlValueToken(): string
     {
-        return '(?:' . self::STRING_VALUE() . '|' . self::CSS_URL_VALUE_UNQUOTED() . ')';
+        return '(?:' . self::stringValueToken() . '|' . self::cssUnquotedUrlValueToken() . ')';
     }
 
+    /**
+     * Regex token for an unquoted CSS url value
+     *
+     * @return string
+     */
     //language=RegExp
-    public static function CSS_URL_VALUE_UNQUOTED(): string
+    public static function cssUnquotedUrlValueToken(): string
     {
         return '(?<=url\()(?>\s*+(?:\\\\.)?[^\\\\()\s\'"]*+)++';
     }
-
 }
-

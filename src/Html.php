@@ -15,31 +15,49 @@ trait Html
 {
     use Base;
 
+    /**
+     * Regex token for a string
+     *
+     * @return string
+     */
     //language=RegExp
-    public static function HTML_COMMENT(): string
+    public static function htmlCommentToken(): string
     {
         return '<!--(?>-?[^-]*+)*?--!?>';
         //return '(?:(?:<!--|(?<=[\s/^])-->)[^\r\n]*+)';
     }
 
+    /**
+     * Regex token for an array of HTML elements
+     *
+     * @param   array  $elements  Array of names of HTML elements
+     *
+     * @return string
+     */
     //language=RegExp
-
-    public static function HTML_ELEMENTS(array $aElement): string
+    public static function htmlElementsToken(array $elements): string
     {
-        $aResult = array();
+        $result = [];
 
-        foreach ($aElement as $sElement) {
-            $aResult[] = self::HTML_ELEMENT($sElement);
+        foreach ($elements as $element) {
+            $result[] = self::htmlElementToken($element);
         }
 
-        return '(?:' . implode('|', $aResult) . ')';
+        return '(?:' . implode('|', $result) . ')';
     }
 
+    /**
+     * Regex token for an HTML element
+     *
+     * @param   string  $element        Name of HTML element
+     * @param   bool    $isSelfClosing  Whether element is self-closing
+     *
+     * @return string
+     */
     //language=RegExp
-
-    public static function HTML_ELEMENT($element = '', $isSelfClosing = false): string
+    public static function htmlElementToken(string $element = '', bool $isSelfClosing = false): string
     {
-        $name = $element != '' ? $element : self::HTML_GENERIC_ELEMENT();
+        $name = $element != '' ? $element : self::htmlGenericElementToken();
         $tag  = '<' . $name . '\b(?:\s++' . self::parseAttributesStatic() . ')?\s*+>';
 
         if ( ! $isSelfClosing) {
@@ -49,58 +67,91 @@ trait Html
         return $tag;
     }
 
+    /**
+     * Regex token for any valid HTML element name
+     *
+     * @return string
+     */
     //language=RegExp
-
-    public static function HTML_GENERIC_ELEMENT(): string
+    public static function htmlGenericElementToken(): string
     {
         return '[a-z0-9]++';
     }
 
+    /**
+     * Regex for parsing an HTML attribute
+     *
+     * @return string
+     */
     //language=RegExp
-
     protected static function parseAttributesStatic(): string
     {
-        return '(?>' . self::HTML_ATTRIBUTE_CP() . '\s*+)*?';
+        return '(?>' . self::htmlAttributeWithCaptureValueToken() . '\s*+)*?';
     }
 
+    /**
+     * Regex token for an HTML attribute, optionally capturing the value in a capture group
+     *
+     * @param   string  $attrName
+     * @param   bool    $captureValue
+     * @param   bool    $captureDelimiter
+     * @param   string  $matchedValue
+     *
+     * @return string
+     */
     //language=RegExp
-
-    public static function HTML_ATTRIBUTE_CP(
-            $attrName = '',
-            $captureValue = false,
-            $captureDelimiter = false,
-            $matchedValue = ''
-    ) {
-        $name = $attrName != '' ? $attrName : '[^\s/"\'=<>]++';
+    public static function htmlAttributeWithCaptureValueToken(
+            string $attrName = '',
+            bool $captureValue = false,
+            bool $captureDelimiter = false,
+            string $matchedValue = ''
+    ): string {
+        $name      = $attrName != '' ? $attrName : '[^\s/"\'=<>]++';
         $delimiter = $captureDelimiter ? '([\'"]?)' : '[\'"]?';
 
         //If we don't need to match a value then the value of attribute is optional
         if ($matchedValue == '') {
-            $attribute = $name . '(?:\s*+=\s*+(?>' . $delimiter . ')<<' . self::HTML_ATTRIBUTE_VALUE() . '>>[\'"]?)?';
+            $attribute = $name . '(?:\s*+=\s*+(?>' . $delimiter . ')<<' . self::htmlAttributeValueToken(
+                    ) . '>>[\'"]?)?';
         } else {
-            $attribute = $name . '\s*+=\s*+(?>' . $delimiter . ')' . $matchedValue . '<<' . self::HTML_ATTRIBUTE_VALUE(
+            $attribute = $name . '\s*+=\s*+(?>' . $delimiter . ')' . $matchedValue . '<<' . self::htmlAttributeValueToken(
                     ) . '>>[\'"]?';
         }
 
         return self::prepare($attribute, $captureValue);
     }
 
+    /**
+     * Regex token for an HTML attribute value
+     *
+     * @return string
+     */
     //language=RegExp
-
-    public static function HTML_ATTRIBUTE_VALUE(): string
+    public static function htmlAttributeValueToken(): string
     {
-        return '(?:' . self::STRING_VALUE() . '|' . self::HTML_ATTRIBUTE_VALUE_UNQUOTED() . ')';
+        return '(?:' . self::stringValueToken() . '|' . self::htmlUnquotedAttributeValueToken() . ')';
     }
 
+    /**
+     * Regex token for an unquoted HTML attribute value
+     *
+     * @return string
+     */
     //language=RegExp
-
-    public static function HTML_ATTRIBUTE_VALUE_UNQUOTED(): string
+    public static function htmlUnquotedAttributeValueToken(): string
     {
         return '(?<==)[^\s*+>]++';
     }
 
-    public static function HTML_ELEMENT_SELF_CLOSING($element = ''): string
+    /**
+     * Regex token for a self closing HTML element
+     *
+     * @param   string  $element  Name of element
+     *
+     * @return string
+     */
+    public static function htmlSelfClosingElementToken(string $element = ''): string
     {
-        return self::HTML_ELEMENT($element, true);
+        return self::htmlElementToken($element, true);
     }
 }

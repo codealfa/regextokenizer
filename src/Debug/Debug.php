@@ -30,10 +30,10 @@ trait Debug
     public $_printCode = true;
     protected $_ip = '';
 
-    public function _debug($regex, $code, $regexNum = 0)
+    public function _debug($regex, $code, $regexNum = 0): void
     {
         if ( ! $this->_debug) {
-            return false;
+            return;
         }
 
         if (is_null($this->logger)) {
@@ -46,7 +46,7 @@ trait Debug
         if ($pstamp === 0) {
             $pstamp = microtime(true);
 
-            return true;
+            return;
         }
 
         $nstamp = microtime(true);

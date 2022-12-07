@@ -18,90 +18,159 @@ trait Base
 {
     use Debug;
 
+    /**
+     * Regex token for a string inside double quotes
+     *
+     * @return string
+     */
     //language=RegExp
-    public static function DOUBLE_QUOTE_STRING(): string
+    public static function doubleQuoteStringToken(): string
     {
-        return '"' . self::DOUBLE_QUOTE_STRING_VALUE() . '(?:"|(?=$))';
+        return '"' . self::doubleQuoteStringValueToken() . '(?:"|(?=$))';
     }
 
+    /**
+     * Regex token for the value of a string inside double quotes
+     *
+     * @return string
+     */
     //language=RegExp
-    public static function DOUBLE_QUOTE_STRING_VALUE(): string
+    public static function doubleQuoteStringValueToken(): string
     {
         return '(?<=")(?>(?:\\\\.)?[^\\\\"]*+)++';
     }
 
+    /**
+     * Regex token for a string enclosed by single quotes
+     *
+     * @return string
+     */
     //language=RegExp
-    public static function SINGLE_QUOTE_STRING(): string
+    public static function singleQuoteStringToken(): string
     {
-        return "'" . self::SINGLE_QUOTE_STRING_VALUE() . "(?:'|(?=$))";
+        return "'" . self::singleQuoteStringValueToken() . "(?:'|(?=$))";
     }
 
+    /**
+     * Regex token for the value of a string inside single quotes
+     *
+     * @return string
+     */
     //language=RegExp
-    public static function SINGLE_QUOTE_STRING_VALUE(): string
+    public static function singleQuoteStringValueToken(): string
     {
         return "(?<=')(?>(?:\\\\.)?[^\\\\']*+)++";
     }
 
+    /**
+     * Regex token for a string enclosed by back ticks
+     *
+     * @return string
+     */
     //language=RegExp
-    public static function BACK_TICK_STRING(): string
+    public static function backTickStringToken(): string
     {
-        return '`' . self::BACK_TICK_STRING_VALUE() . '(?:`|(?=$))';
+        return '`' . self::backTickStringValueToken() . '(?:`|(?=$))';
     }
 
+    /**
+     * Regex token for the value of a string inside back ticks
+     *
+     * @return string
+     */
     //language=RegExp
-    public static function BACK_TICK_STRING_VALUE(): string
+    public static function backTickStringValueToken(): string
     {
         return '(?<=`)(?>(?:\\\\.)?[^\\\\`]*+)++';
     }
 
+    /**
+     * Regex token for any string, optionally capturing the value in a capture group
+     *
+     * @param   bool  $shouldCaptureValue  Whether value should be captured in a capture group
+     *
+     * @return string
+     */
     //language=RegExp
-    public static function STRING_CP($bCV = false)
+    public static function stringWithCaptureValueToken(bool $shouldCaptureValue = false): string
     {
-        $sString = '[\'"`]<<' . self::STRING_VALUE() . '>>[\'"`]';
+        $string = '[\'"`]<<' . self::stringValueToken() . '>>[\'"`]';
 
-        return self::prepare($sString, $bCV);
+        return self::prepare($string, $shouldCaptureValue);
     }
 
+    /**
+     * Regex token for the value of a string regardless of which quotes are used
+     *
+     * @return string
+     */
     //language=RegExp
-    public static function STRING_VALUE(): string
+    public static function stringValueToken(): string
     {
-        return '(?:' . self::DOUBLE_QUOTE_STRING_VALUE() . '|' . self::SINGLE_QUOTE_STRING_VALUE(
-                ) . '|' . self::BACK_TICK_STRING_VALUE() . ')';
+        return '(?:' . self::doubleQuoteStringValueToken() . '|' . self::singleQuoteStringValueToken(
+                ) . '|' . self::backTickStringValueToken() . ')';
     }
 
+    /**
+     * @param   string  $regex               Regular expression string
+     * @param   bool    $shouldCaptureValue  Whether value should be captured
+     *
+     * @return string
+     */
     //language=RegExp
-    private static function prepare($sRegex, $bCV)
+    private static function prepare(string $regex, bool $shouldCaptureValue): string
     {
-        $aSearchArray = array('<<<', '>>>', '<<', '>>');
+        $searchArray = ['<<<', '>>>', '<<', '>>'];
 
-        if ($bCV) {
-            return str_replace($aSearchArray, array('(?|', ')', '(', ')'), $sRegex);
+        if ($shouldCaptureValue) {
+            return str_replace($searchArray, ['(?|', ')', '(', ')'], $regex);
         } else {
-            return str_replace($aSearchArray, array('(?:', ')', '', ''), $sRegex);
+            return str_replace($searchArray, ['(?:', ')', '', ''], $regex);
         }
     }
 
+    /**
+     * Regex token for block or line comments
+     *
+     * @return string
+     */
     //language=RegExp
-    public static function COMMENT(): string
+    public static function commentToken(): string
     {
-        return '(?:' . self::BLOCK_COMMENT() . '|' . self::LINE_COMMENT() . ')';
+        return '(?:' . self::blockCommentToken() . '|' . self::lineCommentToken() . ')';
     }
 
+    /**
+     * Regex token for block comment
+     *
+     * @return string
+     */
     //language=RegExp
-    public static function BLOCK_COMMENT(): string
+    public static function blockCommentToken(): string
     {
         return '/\*(?>\*?[^*]*+)*?\*/';
     }
 
-    public static function LINE_COMMENT(): string
+    /**
+     * Regex token for line comment
+     *
+     * @return string
+     */
+    public static function lineCommentToken(): string
     {
         return '//[^\r\n]*+';
     }
 
     /**
+     * Will throw an exception when a PHP preg error is encountered. You can input the name of the exception you want
+     * thrown, otherwise the native Exception class will be thrown
+     *
+     * @param   string  $exceptionClassName
+     *
+     * @return void
      * @throws Exception
      */
-    protected static function throwExceptionOnPregError($exceptionClassName = '')
+    protected static function throwExceptionOnPregError(string $exceptionClassName = '')
     {
         if ($exceptionClassName === '') {
             $exceptionClassName = 'Exception';
