@@ -21,54 +21,49 @@ use Psr\Log\NullLogger;
  */
 trait Debug
 {
-	use LoggerAwareTrait;
+    use LoggerAwareTrait;
 
-	public $_debug = false;
-	/**DO NOT ENABLE on production sites!! **/
-	public $_regexNum = -1;
-	public $_limit = 10.0;
-	public $_printCode = true;
-	protected $_ip = '';
+    public $_debug = false;
+    /**DO NOT ENABLE on production sites!! **/
+    public $_regexNum = -1;
+    public $_limit = 10.0;
+    public $_printCode = true;
+    protected $_ip = '';
 
-	public function _debug( $regex, $code, $regexNum = 0 )
-	{
-		if ( ! $this->_debug )
-		{
-			return false;
-		}
+    public function _debug($regex, $code, $regexNum = 0)
+    {
+        if ( ! $this->_debug) {
+            return false;
+        }
 
-		if ( is_null( $this->logger ) )
-		{
-			$this->setLogger( new NullLogger() );
-		}
+        if (is_null($this->logger)) {
+            $this->setLogger(new NullLogger());
+        }
 
-		/** @var float $pstamp */
-		static $pstamp = 0;
+        /** @var float $pstamp */
+        static $pstamp = 0;
 
-		if ( $pstamp === 0 )
-		{
-			$pstamp = microtime( true );
+        if ($pstamp === 0) {
+            $pstamp = microtime(true);
 
-			return true;
-		}
+            return true;
+        }
 
-		$nstamp = microtime( true );
-		$time   = ( $nstamp - $pstamp ) * 1000;
+        $nstamp = microtime(true);
+        $time   = ($nstamp - $pstamp) * 1000;
 
-		if ( $time > $this->_limit )
-		{
-			$context = [ 'category' => 'Regextokenizer' ];
+        if ($time > $this->_limit) {
+            $context = ['category' => 'Regextokenizer'];
 
-			$this->logger->debug( 'regexNum = ' . $regexNum, $context );
-			$this->logger->debug( 'time = ' . (string)$time, $context );
+            $this->logger->debug('regexNum = ' . $regexNum, $context);
+            $this->logger->debug('time = ' . (string)$time, $context);
 
-			if ( $this->_printCode )
-			{
-				$this->logger->debug( 'regex = ' . $regex, $context );
-				$this->logger->debug( 'code = ' . $code, $context );
-			}
-		}
+            if ($this->_printCode) {
+                $this->logger->debug('regex = ' . $regex, $context);
+                $this->logger->debug('code = ' . $code, $context);
+            }
+        }
 
-		$pstamp = $nstamp;
-	}
+        $pstamp = $nstamp;
+    }
 }

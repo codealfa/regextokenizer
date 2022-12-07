@@ -13,10 +13,10 @@ namespace CodeAlfa\RegexTokenizer;
 
 trait Js
 {
-        use Base;
+    use Base;
 
-        public static function JS_HTML_COMMENT()
-        {
-                return '(?:(?:<!--|(?<=[\s/^])-->)[^\r\n]*+)';
-        }
+    public static function JS_HTML_COMMENT()
+    {
+        return '(?:(?:<!--|(?<=[\s/^])-->)[^\r\n]*+)';
+    }
 }

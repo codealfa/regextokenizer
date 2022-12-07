@@ -13,88 +13,94 @@ namespace CodeAlfa\RegexTokenizer;
 
 trait Html
 {
-	use Base;
+    use Base;
 
-	//language=RegExp
-	public static function HTML_COMMENT(): string
-	{
-		return '<!--(?>-?[^-]*+)*?--!?>';
-		//return '(?:(?:<!--|(?<=[\s/^])-->)[^\r\n]*+)';
-	}
+    //language=RegExp
+    public static function HTML_COMMENT(): string
+    {
+        return '<!--(?>-?[^-]*+)*?--!?>';
+        //return '(?:(?:<!--|(?<=[\s/^])-->)[^\r\n]*+)';
+    }
 
-	//language=RegExp
-	public static function HTML_GENERIC_ELEMENT(): string
-	{
-		return '[a-z0-9]++';
-	}
+    //language=RegExp
 
-	//language=RegExp
-	public static function HTML_ATTRIBUTE_CP( $attrName = '', $captureValue = false, $captureDelimiter = false, $matchedValue = '' )
-	{
-		$name      = $attrName != '' ? $attrName : '[^\s/"\'=<>]++';
-		$delimiter = $captureDelimiter ? '([\'"]?)' : '[\'"]?';
+    public static function HTML_ELEMENTS(array $aElement): string
+    {
+        $aResult = array();
 
-		//If we don't need to match a value then the value of attribute is optional
-		if ( $matchedValue == '' )
-		{
-			$attribute = $name . '(?:\s*+=\s*+(?>' . $delimiter . ')<<' . self::HTML_ATTRIBUTE_VALUE() . '>>[\'"]?)?';
-		}
-		else
-		{
-			$attribute = $name . '\s*+=\s*+(?>' . $delimiter . ')' . $matchedValue . '<<' . self::HTML_ATTRIBUTE_VALUE() . '>>[\'"]?';
-		}
+        foreach ($aElement as $sElement) {
+            $aResult[] = self::HTML_ELEMENT($sElement);
+        }
 
-		return self::prepare( $attribute, $captureValue );
-	}
+        return '(?:' . implode('|', $aResult) . ')';
+    }
 
-	//language=RegExp
-	public static function HTML_ATTRIBUTE_VALUE(): string
-	{
-		return '(?:' . self::STRING_VALUE() . '|' . self::HTML_ATTRIBUTE_VALUE_UNQUOTED() . ')';
-	}
+    //language=RegExp
 
-	//language=RegExp
-	public static function HTML_ATTRIBUTE_VALUE_UNQUOTED(): string
-	{
-		return '(?<==)[^\s*+>]++';
-	}
+    public static function HTML_ELEMENT($element = '', $isSelfClosing = false): string
+    {
+        $name = $element != '' ? $element : self::HTML_GENERIC_ELEMENT();
+        $tag  = '<' . $name . '\b(?:\s++' . self::parseAttributesStatic() . ')?\s*+>';
 
-	//language=RegExp
-	public static function HTML_ELEMENTS( array $aElement ): string
-	{
-		$aResult = array();
+        if ( ! $isSelfClosing) {
+            $tag .= '(?><?[^<]*+)*?</' . $name . '\s*+>';
+        }
 
-		foreach ( $aElement as $sElement )
-		{
-			$aResult[] = self::HTML_ELEMENT( $sElement );
-		}
+        return $tag;
+    }
 
-		return '(?:' . implode( '|', $aResult ) . ')';
-	}
+    //language=RegExp
 
-	//language=RegExp
-	public static function HTML_ELEMENT( $element = '', $isSelfClosing = false ): string
-	{
-		$name = $element != '' ? $element : self::HTML_GENERIC_ELEMENT();
-		$tag  = '<' . $name . '\b(?:\s++' . self::parseAttributesStatic() . ')?\s*+>';
+    public static function HTML_GENERIC_ELEMENT(): string
+    {
+        return '[a-z0-9]++';
+    }
 
-		if ( ! $isSelfClosing )
-		{
-			$tag .= '(?><?[^<]*+)*?</' . $name . '\s*+>';
-		}
+    //language=RegExp
 
-		return $tag;
-	}
+    protected static function parseAttributesStatic(): string
+    {
+        return '(?>' . self::HTML_ATTRIBUTE_CP() . '\s*+)*?';
+    }
 
-	//language=RegExp
-	public static function HTML_ELEMENT_SELF_CLOSING( $element = '' ): string
-	{
-		return self::HTML_ELEMENT( $element, true );
-	}
+    //language=RegExp
 
+    public static function HTML_ATTRIBUTE_CP(
+            $attrName = '',
+            $captureValue = false,
+            $captureDelimiter = false,
+            $matchedValue = ''
+    ) {
+        $name = $attrName != '' ? $attrName : '[^\s/"\'=<>]++';
+        $delimiter = $captureDelimiter ? '([\'"]?)' : '[\'"]?';
 
-	protected static function parseAttributesStatic(): string
-	{
-		return '(?>' . self::HTML_ATTRIBUTE_CP() . '\s*+)*?';
-	}
+        //If we don't need to match a value then the value of attribute is optional
+        if ($matchedValue == '') {
+            $attribute = $name . '(?:\s*+=\s*+(?>' . $delimiter . ')<<' . self::HTML_ATTRIBUTE_VALUE() . '>>[\'"]?)?';
+        } else {
+            $attribute = $name . '\s*+=\s*+(?>' . $delimiter . ')' . $matchedValue . '<<' . self::HTML_ATTRIBUTE_VALUE(
+                    ) . '>>[\'"]?';
+        }
+
+        return self::prepare($attribute, $captureValue);
+    }
+
+    //language=RegExp
+
+    public static function HTML_ATTRIBUTE_VALUE(): string
+    {
+        return '(?:' . self::STRING_VALUE() . '|' . self::HTML_ATTRIBUTE_VALUE_UNQUOTED() . ')';
+    }
+
+    //language=RegExp
+
+    public static function HTML_ATTRIBUTE_VALUE_UNQUOTED(): string
+    {
+        return '(?<==)[^\s*+>]++';
+    }
+
+    public static function HTML_ELEMENT_SELF_CLOSING($element = ''): string
+    {
+        return self::HTML_ELEMENT($element, true);
+    }
 }
