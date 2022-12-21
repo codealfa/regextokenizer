@@ -11,7 +11,7 @@
   ],
   "require": {
     "php": ">=7.0",
-    "psr/log": "1.x-dev"
+    "psr/log": "^1"
   },
   "autoload": {
     "psr-4": {
