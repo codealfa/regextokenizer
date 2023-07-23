@@ -13,6 +13,9 @@ namespace CodeAlfa\RegexTokenizer;
 
 use CodeAlfa\RegexTokenizer\Debug\Debug;
 use Exception;
+use Throwable;
+
+use function assert;
 
 trait Base
 {
@@ -87,7 +90,7 @@ trait Base
     /**
      * Regex token for any string, optionally capturing the value in a capture group
      *
-     * @param   bool  $shouldCaptureValue  Whether value should be captured in a capture group
+     * @param bool $shouldCaptureValue Whether value should be captured in a capture group
      *
      * @return string
      */
@@ -107,13 +110,12 @@ trait Base
     //language=RegExp
     public static function stringValueToken(): string
     {
-        return '(?:' . self::doubleQuoteStringValueToken() . '|' . self::singleQuoteStringValueToken(
-                ) . '|' . self::backTickStringValueToken() . ')';
+        return '(?:' . self::doubleQuoteStringValueToken() . '|' . self::singleQuoteStringValueToken() . '|' . self::backTickStringValueToken() . ')';
     }
 
     /**
-     * @param   string  $regex               Regular expression string
-     * @param   bool    $shouldCaptureValue  Whether value should be captured
+     * @param string $regex Regular expression string
+     * @param bool $shouldCaptureValue Whether value should be captured
      *
      * @return string
      */
@@ -165,25 +167,28 @@ trait Base
      * Will throw an exception when a PHP preg error is encountered. You can input the name of the exception you want
      * thrown, otherwise the native Exception class will be thrown
      *
-     * @param   string  $exceptionClassName
+     * @param string $exceptionClassName
      *
      * @return void
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     protected static function throwExceptionOnPregError(string $exceptionClassName = '')
     {
         if ($exceptionClassName === '') {
-            $exceptionClassName = 'Exception';
+            $exceptionClassName = Exception::class;
         }
 
         $error = array_flip(
-                array_filter(get_defined_constants(true)['pcre'], function ($value) {
-                    return substr($value, -6) === '_ERROR';
-                }, ARRAY_FILTER_USE_KEY)
+            array_filter(get_defined_constants(true)['pcre'], function ($value) {
+                return substr($value, -6) === '_ERROR';
+            }, ARRAY_FILTER_USE_KEY)
         )[preg_last_error()];
 
         if (preg_last_error() != PREG_NO_ERROR) {
-            throw new $exceptionClassName($error);
+            $exception = new $exceptionClassName($error);
+            assert($exception instanceof Throwable);
+
+            throw $exception;
         }
     }
 }
