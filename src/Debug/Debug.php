@@ -12,6 +12,7 @@
 namespace CodeAlfa\RegexTokenizer\Debug;
 
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
@@ -23,22 +24,28 @@ trait Debug
 {
     use LoggerAwareTrait;
 
-    public $_debug = false;
     /**DO NOT ENABLE on production sites!! **/
-    public $_regexNum = -1;
+    public $_debug = false;
     public $_limit = 10.0;
     public $_printCode = true;
-    protected $_ip = '';
 
-    public function _debug($regex, $code, $regexNum = 0): void
+    /**
+     * @param string $regex
+     * @param string $code
+     * @param mixed $regexNum
+     * @return void
+     */
+    public function _debug(string $regex, string $code, $regexNum = 0): void
     {
-        if (! $this->_debug) {
+        if (!$this->_debug) {
             return;
         }
 
         if (is_null($this->logger)) {
             $this->setLogger(new NullLogger());
         }
+
+        assert($this->logger instanceof LoggerInterface);
 
         /** @var float $pstamp */
         static $pstamp = 0.0;
@@ -50,12 +57,12 @@ trait Debug
         }
 
         $nstamp = microtime(true);
-        $time   = ($nstamp - $pstamp) * 1000;
+        $time = ($nstamp - $pstamp) * 1000;
 
         if ($time > $this->_limit) {
             $context = ['category' => 'Regextokenizer'];
 
-            $this->logger->debug('regexNum = ' . $regexNum, $context);
+            $this->logger->debug('regexNum = ' . (string)$regexNum, $context);
             $this->logger->debug('time = ' . (string)$time, $context);
 
             if ($this->_printCode) {

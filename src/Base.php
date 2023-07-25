@@ -164,31 +164,22 @@ trait Base
     }
 
     /**
-     * Will throw an exception when a PHP preg error is encountered. You can input the name of the exception you want
-     * thrown, otherwise the native Exception class will be thrown
-     *
-     * @param string $exceptionClassName
+     * Will throw an exception when a PHP preg error is encountered.
      *
      * @return void
-     * @throws Exception|Throwable
+     * @throws Exception
      */
-    protected static function throwExceptionOnPregError(string $exceptionClassName = '')
+    protected static function throwExceptionOnPregError()
     {
-        if ($exceptionClassName === '') {
-            $exceptionClassName = Exception::class;
-        }
-
         $error = array_flip(
-            array_filter(get_defined_constants(true)['pcre'], function ($value) {
+            array_filter(get_defined_constants(true)['pcre'], function (string $value) {
                 return substr($value, -6) === '_ERROR';
             }, ARRAY_FILTER_USE_KEY)
         )[preg_last_error()];
 
         if (preg_last_error() != PREG_NO_ERROR) {
-            $exception = new $exceptionClassName($error);
-            assert($exception instanceof Throwable);
 
-            throw $exception;
+            throw new Exception($error);
         }
     }
 }
