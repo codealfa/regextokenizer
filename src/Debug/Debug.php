@@ -32,7 +32,7 @@ trait Debug
 
     public function _debug($regex, $code, $regexNum = 0): void
     {
-        if ( ! $this->_debug) {
+        if (! $this->_debug) {
             return;
         }
 
@@ -41,9 +41,9 @@ trait Debug
         }
 
         /** @var float $pstamp */
-        static $pstamp = 0;
+        static $pstamp = 0.0;
 
-        if ($pstamp === 0) {
+        if ($pstamp === 0.0) {
             $pstamp = microtime(true);
 
             return;

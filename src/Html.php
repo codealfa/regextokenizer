@@ -30,7 +30,7 @@ trait Html
     /**
      * Regex token for an array of HTML elements
      *
-     * @param   array  $elements  Array of names of HTML elements
+     * @param   string[]  $elements  Array of names of HTML elements
      *
      * @return string
      */
@@ -60,7 +60,7 @@ trait Html
         $name = $element != '' ? $element : self::htmlGenericElementToken();
         $tag  = '<' . $name . '\b(?:\s++' . self::parseAttributesStatic() . ')?\s*+>';
 
-        if ( ! $isSelfClosing) {
+        if (! $isSelfClosing) {
             $tag .= '(?><?[^<]*+)*?</' . $name . '\s*+>';
         }
 
@@ -101,10 +101,10 @@ trait Html
      */
     //language=RegExp
     public static function htmlAttributeWithCaptureValueToken(
-            string $attrName = '',
-            bool $captureValue = false,
-            bool $captureDelimiter = false,
-            string $matchedValue = ''
+        string $attrName = '',
+        bool $captureValue = false,
+        bool $captureDelimiter = false,
+        string $matchedValue = ''
     ): string {
         $name      = $attrName != '' ? $attrName : '[^\s/"\'=<>]++';
         $delimiter = $captureDelimiter ? '([\'"]?)' : '[\'"]?';
@@ -112,10 +112,10 @@ trait Html
         //If we don't need to match a value then the value of attribute is optional
         if ($matchedValue == '') {
             $attribute = $name . '(?:\s*+=\s*+(?>' . $delimiter . ')<<' . self::htmlAttributeValueToken(
-                    ) . '>>[\'"]?)?';
+            ) . '>>[\'"]?)?';
         } else {
             $attribute = $name . '\s*+=\s*+(?>' . $delimiter . ')' . $matchedValue . '<<' . self::htmlAttributeValueToken(
-                    ) . '>>[\'"]?';
+            ) . '>>[\'"]?';
         }
 
         return self::prepare($attribute, $captureValue);
