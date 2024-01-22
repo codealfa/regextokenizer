@@ -178,7 +178,6 @@ trait Base
         )[preg_last_error()];
 
         if (preg_last_error() != PREG_NO_ERROR) {
-
             throw new Exception($error);
         }
     }
