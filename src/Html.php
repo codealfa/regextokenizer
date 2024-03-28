@@ -30,7 +30,7 @@ trait Html
     /**
      * Regex token for an array of HTML elements
      *
-     * @param   string[]  $elements  Array of names of HTML elements
+     * @param string[] $elements Array of names of HTML elements
      *
      * @return string
      */
@@ -49,8 +49,8 @@ trait Html
     /**
      * Regex token for an HTML element
      *
-     * @param   string  $element        Name of HTML element
-     * @param   bool    $isSelfClosing  Whether element is self-closing
+     * @param string $element Name of HTML element
+     * @param bool $isSelfClosing Whether element is self-closing
      *
      * @return string
      */
@@ -58,13 +58,22 @@ trait Html
     public static function htmlElementToken(string $element = '', bool $isSelfClosing = false): string
     {
         $name = $element != '' ? $element : self::htmlGenericElementToken();
-        $tag  = '<' . $name . '\b(?:\s++' . self::parseAttributesStatic() . ')?\s*+>';
+        $tag = '<' . $name . '\b(?:\s++' . self::parseAttributesStatic() . ')?\s*+>';
 
-        if (! $isSelfClosing) {
+        if (!$isSelfClosing) {
             $tag .= '(?><?[^<]*+)*?</' . $name . '\s*+>';
         }
 
         return $tag;
+    }
+
+    //language=RegExp
+    public static function htmlNestedElementToken(string $element): string
+    {
+        $attributes = self::parseAttributesStatic();
+
+        return "(?<{$element}><{$element}\b(?:\s++{$attributes})?\s*+>"
+            . "(?>(?>(?:<(?!/?{$element}[^<>]*>))?[^<]++)++|(?&{$element}))*+</{$element}\s*+>)";
     }
 
     /**
@@ -92,10 +101,10 @@ trait Html
     /**
      * Regex token for an HTML attribute, optionally capturing the value in a capture group
      *
-     * @param   string  $attrName
-     * @param   bool    $captureValue
-     * @param   bool    $captureDelimiter
-     * @param   string  $matchedValue
+     * @param string $attrName
+     * @param bool $captureValue
+     * @param bool $captureDelimiter
+     * @param string $matchedValue
      *
      * @return string
      */
@@ -106,16 +115,14 @@ trait Html
         bool $captureDelimiter = false,
         string $matchedValue = ''
     ): string {
-        $name      = $attrName != '' ? $attrName : '[^\s/"\'=<>]++';
+        $name = $attrName != '' ? $attrName : '[^\s/"\'=<>]++';
         $delimiter = $captureDelimiter ? '([\'"]?)' : '[\'"]?';
 
         //If we don't need to match a value then the value of attribute is optional
         if ($matchedValue == '') {
-            $attribute = $name . '(?:\s*+=\s*+(?>' . $delimiter . ')<<' . self::htmlAttributeValueToken(
-            ) . '>>[\'"]?)?';
+            $attribute = $name . '(?:\s*+=\s*+(?>' . $delimiter . ')<<' . self::htmlAttributeValueToken() . '>>[\'"]?)?';
         } else {
-            $attribute = $name . '\s*+=\s*+(?>' . $delimiter . ')' . $matchedValue . '<<' . self::htmlAttributeValueToken(
-            ) . '>>[\'"]?';
+            $attribute = $name . '\s*+=\s*+(?>' . $delimiter . ')' . $matchedValue . '<<' . self::htmlAttributeValueToken() . '>>[\'"]?';
         }
 
         return self::prepare($attribute, $captureValue);
@@ -146,7 +153,7 @@ trait Html
     /**
      * Regex token for a self closing HTML element
      *
-     * @param   string  $element  Name of element
+     * @param string $element Name of element
      *
      * @return string
      */
