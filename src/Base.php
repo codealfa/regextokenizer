@@ -29,13 +29,14 @@ trait Base
     //language=RegExp
     public static function doubleQuoteStringToken(): string
     {
-        return '"' . self::doubleQuoteStringValueToken() . '(?:"|(?=$))';
+        return '"(?>[^"\\\\]++|\\\\.)*+(?>"|$)';
     }
 
     /**
      * Regex token for the value of a string inside double quotes
      *
      * @return string
+     * @deprecated
      */
     //language=RegExp
     public static function doubleQuoteStringValueToken(): string
@@ -51,13 +52,14 @@ trait Base
     //language=RegExp
     public static function singleQuoteStringToken(): string
     {
-        return "'" . self::singleQuoteStringValueToken() . "(?:'|(?=$))";
+        return "'(?>[^'\\\\]++|\\\\.)*+(?>'|$)";
     }
 
     /**
      * Regex token for the value of a string inside single quotes
      *
      * @return string
+     * @deprecated
      */
     //language=RegExp
     public static function singleQuoteStringValueToken(): string
@@ -73,13 +75,14 @@ trait Base
     //language=RegExp
     public static function backTickStringToken(): string
     {
-        return '`' . self::backTickStringValueToken() . '(?:`|(?=$))';
+        return '`(?>[^`\\\\]++|\\\\.)*+(?>`|$)';
     }
 
     /**
      * Regex token for the value of a string inside back ticks
      *
      * @return string
+     * @deprecated
      */
     //language=RegExp
     public static function backTickStringValueToken(): string
@@ -118,6 +121,7 @@ trait Base
      * @param bool $shouldCaptureValue Whether value should be captured
      *
      * @return string
+     * @deprecated
      */
     //language=RegExp
     private static function prepare(string $regex, bool $shouldCaptureValue): string
@@ -139,7 +143,7 @@ trait Base
     //language=RegExp
     public static function commentToken(): string
     {
-        return '(?:' . self::blockCommentToken() . '|' . self::lineCommentToken() . ')';
+        return '(?>' . self::blockCommentToken() . '|' . self::lineCommentToken() . ')';
     }
 
     /**
@@ -150,7 +154,7 @@ trait Base
     //language=RegExp
     public static function blockCommentToken(): string
     {
-        return '/\*(?>\*?[^*]*+)*?\*/';
+        return '/\*(?>[^*]++|\*)*?\*/';
     }
 
     /**
