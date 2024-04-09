@@ -50,14 +50,18 @@ trait Html
     {
         $startTag = self::htmlStartTagToken($name);
 
-        if ($voidElement) {
+        if ($voidElement === true) {
             return $startTag;
         }
 
-        $textContent = self::htmlTextContent();
+        $textContent = self::htmlTextContentToken($name);
         $endTag = self::htmlEndTagToken($name);
 
-        return "{$startTag}{$textContent}{$endTag}";
+        if ($voidElement === false) {
+            return "{$startTag}{$textContent}?{$endTag}";
+        }
+
+        return "{$startTag}(?:{$textContent}?{$endTag})?";
     }
 
     //language=RegExp
@@ -66,7 +70,7 @@ trait Html
         $startTag = self::htmlStartTagToken($name);
         $endTag = self::htmlEndTagToken($name);
 
-        return "(?<{$name}>{$startTag}(?>(?>(?:<(?!/?{$name}))?[^<]++)++|(?&{$name}))*+{$endTag})";
+        return "(?<{$name}>{$startTag}(?>(?:[^<]++|(?!</?{$name})<)++|(?&{$name}))*+{$endTag})";
     }
 
     /**
@@ -78,47 +82,6 @@ trait Html
     public static function htmlGenericElementToken(): string
     {
         return '[a-z0-9]++';
-    }
-
-    /**
-     * Regex for parsing an HTML attribute
-     *
-     * @return string
-     */
-    //language=RegExp
-    protected static function parseAttributesStatic(): string
-    {
-        return '(?>' . self::htmlAttributeWithCaptureValueToken() . '\s*+)*?';
-    }
-
-    /**
-     * Regex token for an HTML attribute, optionally capturing the value in a capture group
-     *
-     * @param string $attrName
-     * @param bool $captureValue
-     * @param bool $captureDelimiter
-     * @param string $matchedValue
-     *
-     * @return string
-     */
-    //language=RegExp
-    public static function htmlAttributeWithCaptureValueToken(
-        string $attrName = '',
-        bool $captureValue = false,
-        bool $captureDelimiter = false,
-        string $matchedValue = ''
-    ): string {
-        $name = $attrName != '' ? $attrName : '[^\s/"\'=<>]++';
-        $delimiter = $captureDelimiter ? '([\'"]?)' : '[\'"]?';
-
-        //If we don't need to match a value then the value of attribute is optional
-        if ($matchedValue == '') {
-            $attribute = $name . '(?:\s*+=\s*+(?>' . $delimiter . ')<<' . self::htmlAttributeValueToken() . '>>[\'"]?)?';
-        } else {
-            $attribute = $name . '\s*+=\s*+(?>' . $delimiter . ')' . $matchedValue . '<<' . self::htmlAttributeValueToken() . '>>[\'"]?';
-        }
-
-        return self::prepare($attribute, $captureValue);
     }
 
     public static function htmlAttributeToken(): string
@@ -134,7 +97,7 @@ trait Html
     {
         $a = self::htmlAttributeToken();
 
-        return "(?>{$a}|\s++)*+";
+        return "(?>{$a}|\s++)*";
     }
 
     public static function htmlStartTagToken(?string $name = null): string
@@ -142,7 +105,7 @@ trait Html
         $element = $name ?? self::htmlGenericElementToken();
         $attributes = self::htmlAttributesListToken();
 
-        return "<{$element}\b\s*+{$attributes}\s*+/?>";
+        return "<{$element}\b\s*+{$attributes}+\s*+/?>";
     }
 
     public static function htmlEndTagToken(?string $name = null): string
@@ -152,42 +115,24 @@ trait Html
         return "</{$element}\s*+>";
     }
 
-    public static function htmlTextContent(): string
+    public static function htmlTextContentToken(?string $name = null): string
     {
-        return "(?>[^<]++|<)*?";
+        $st = self::htmlStartTagToken($name);
+        $et = self::htmlEndTagToken($name);
+
+        return "(?>[^<]++|(?!{$st}|$et})<)*";
     }
 
-
-    /**
-     * Regex token for an HTML attribute value
-     *
-     * @return string
-     */
-    //language=RegExp
-    public static function htmlAttributeValueToken(): string
+    public static function htmlStringToken(?string $name = null): string
     {
-        return '(?:' . self::stringValueToken() . '|' . self::htmlUnquotedAttributeValueToken() . ')';
+        $c = self::htmlCommentToken();
+        $el = self::htmlElementToken($name, null);
+        $et = self::htmlEndTagToken($name);
+
+        return "(?>[^<]++|{$c}|{$el}|{$et}|<)*";
     }
 
-    /**
-     * Regex token for an unquoted HTML attribute value
-     *
-     * @return string
-     */
-    //language=RegExp
-    public static function htmlUnquotedAttributeValueToken(): string
-    {
-        return '(?<==)[^\s*+>]++';
-    }
-
-    /**
-     * Regex token for a self closing HTML element
-     *
-     * @param string $element Name of element
-     *
-     * @return string
-     */
-    public static function htmlSelfClosingElementToken(string $element = ''): string
+    public static function htmlVoidElementToken(?string $element = null): string
     {
         return self::htmlElementToken($element, true);
     }

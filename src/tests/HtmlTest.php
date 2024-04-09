@@ -149,4 +149,13 @@ class HtmlTest extends TestCase
         preg_match("#{$regex}#ix", $html, $matches);
         $this->assertEquals($html, $matches[0], 'nested elements');
     }
+
+    public function testHtmlStringToken(): void
+    {
+        $html = '<!DOCTYPE html><html><head><title></title></head><body class=""></body></html>';
+        $regex = self::htmlStringToken();
+
+        preg_match("#{$regex}#ix", $html, $matches);
+        $this->assertEquals($html, $matches[0], 'nested elements');
+    }
 }
