@@ -46,9 +46,12 @@ trait Html
     }
 
     //language=RegExp
-    public static function htmlElementToken(?string $name = null, ?bool $voidElement = false): string
-    {
-        $startTag = self::htmlStartTagToken($name);
+    public static function htmlElementToken(
+        ?string $name = null,
+        ?bool $voidElement = false,
+        bool $attributes = true
+    ): string {
+        $startTag = self::htmlStartTagToken($name, $attributes);
 
         if ($voidElement === true) {
             return $startTag;
@@ -100,10 +103,10 @@ trait Html
         return "(?>{$a}|\s++)*";
     }
 
-    public static function htmlStartTagToken(?string $name = null): string
+    public static function htmlStartTagToken(?string $name = null, bool $attributes = true): string
     {
         $element = $name ?? self::htmlGenericElementToken();
-        $attributes = self::htmlAttributesListToken();
+        $attributes = $attributes ? self::htmlAttributesListToken() : '[^>]*';
 
         return "<{$element}\b\s*+{$attributes}+\s*+/?>";
     }
@@ -117,7 +120,7 @@ trait Html
 
     public static function htmlTextContentToken(?string $name = null): string
     {
-        $st = self::htmlStartTagToken($name);
+        $st = self::htmlStartTagToken($name, false);
         $et = self::htmlEndTagToken($name);
 
         return "(?>[^<]++|(?!{$st}|$et})<)*";
@@ -126,7 +129,7 @@ trait Html
     public static function htmlStringToken(?string $name = null): string
     {
         $c = self::htmlCommentToken();
-        $el = self::htmlElementToken($name, null);
+        $el = self::htmlElementToken($name, null, false);
         $et = self::htmlEndTagToken($name);
 
         return "(?>[^<]++|{$c}|{$el}|{$et}|<)*";
