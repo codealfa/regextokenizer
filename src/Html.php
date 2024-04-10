@@ -34,12 +34,12 @@ trait Html
      * @return string
      */
     //language=RegExp
-    public static function htmlElementsToken(array $elements): string
+    public static function htmlElementsToken(array $elements, bool $voidElements = false): string
     {
         $result = [];
 
         foreach ($elements as $element) {
-            $result[] = self::htmlElementToken($element);
+            $result[] = self::htmlElementToken($element, $voidElements);
         }
 
         return '(?:' . implode('|', $result) . ')';
@@ -120,19 +120,22 @@ trait Html
 
     public static function htmlTextContentToken(?string $name = null): string
     {
-        $st = self::htmlStartTagToken($name, false);
         $et = self::htmlEndTagToken($name);
 
-        return "(?>[^<]++|(?!{$st}|$et})<)*";
+        return "(?>[^<]++|(?!$et})<)*";
     }
 
-    public static function htmlStringToken(?string $name = null): string
+    public static function htmlStringToken(array $excludes = []): string
     {
         $c = self::htmlCommentToken();
-        $el = self::htmlElementToken($name, null, false);
-        $et = self::htmlEndTagToken($name);
+        $ex = '';
 
-        return "(?>[^<]++|{$c}|{$el}|{$et}|<)*";
+        if ($excludes !== []) {
+            $excludedElements = self::htmlElementsToken($excludes);
+            $ex = "|$excludedElements";
+        }
+
+        return "(?>[^<]++|{$c}{$ex}|<)*";
     }
 
     public static function htmlVoidElementToken(?string $element = null): string
