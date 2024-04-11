@@ -41,6 +41,83 @@ trait Css
         return self::prepare($cssUrl, $shouldCaptureValue);
     }
 
+    public static function cssUrlToken(): string
+    {
+        $dqString = self::doubleQuoteStringToken();
+        $sqString = self::singleQuoteStringToken();
+
+        return "url({$dqString}|{$sqString}|[^)]*+)";
+    }
+
+    public static function cssSelectorsListToken(): string
+    {
+        $bc = self::blockCommentToken();
+
+        return "(?>[_a-zA-Z0-9:.\#\*,\s>+~\"'^$=|()\[\]-]++|{$bc})++(?={)";
+    }
+
+    public static function cssDeclarationsListToken(): string
+    {
+        $bc = self::blockCommentToken();
+
+        return "(?>[^{}]++|{$bc})*";
+    }
+
+    public static function cssRuleToken(): string
+    {
+        $selectors = self::cssSelectorsListToken();
+        $declarations = self::cssDeclarationsListToken();
+
+        return "$selectors{{$declarations}+}";
+    }
+
+    public static function cssRulesListToken(): string
+    {
+        $cssRule = self::cssRuleToken();
+        $bc = self::blockCommentToken();
+
+        return "(?>{$cssRule}|$bc|\s++)+";
+    }
+
+    public static function cssRegularAtRulesToken(?string $identifier = null): string
+    {
+        $bc = self::blockCommentToken();
+        $url = self::cssUrlToken();
+        $name = $identifier ?? '[a-zA-Z-]++';
+
+        return "@{$name}\s++(?>[^;/u{}]++|{$bc}|{$url}|u)++;";
+    }
+
+    public static function cssNestedAtRulesToken(): string
+    {
+        $bc = self::blockCommentToken();
+        $cssRules = self::cssRulesListToken();
+        $regularAtRule = self::cssRegularAtRulesToken();
+
+        //language=RegExp
+        return "(?P<atrule>@[a-zA-Z-]++\s++(?>[^{/;]++|{$bc})++"
+        . "{(?>(?:{$regularAtRule}|{$cssRules}+|{$bc}|\s++)++|(?&atrule))*+})";
+    }
+
+    public static function cssNamedNestedAtRulesToken(string $identifier): string
+    {
+        $bc = self::blockCommentToken();
+        $cssString = self::cssStringToken();
+
+        //language=RegExp
+        return "@{$identifier}\s++(?>[^{/;]++|{$bc})++{{$cssString}}";
+    }
+
+    public static function cssStringToken(): string
+    {
+        $bc = self::blockCommentToken();
+        $nestedAtRule = self::cssNestedAtRulesToken();
+        $regularAtRule = self::cssRegularAtRulesToken();
+        $cssRulesList = self::cssRulesListToken();
+
+        return "(?>{$cssRulesList}+|{$nestedAtRule}|{$regularAtRule}|{$bc}|s++)*";
+    }
+
     /**
      * Regex token for a CSS url value
      *

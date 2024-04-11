@@ -84,7 +84,7 @@ trait Html
     //language=RegExp
     public static function htmlGenericElementToken(): string
     {
-        return '[a-z0-9]++';
+        return '[a-zA-Z0-9]++';
     }
 
     public static function htmlAttributeToken(): string
