@@ -43,24 +43,24 @@ trait Css
 
     public static function cssUrlToken(): string
     {
-        $dqString = self::doubleQuoteStringToken();
-        $sqString = self::singleQuoteStringToken();
-
-        return "url({$dqString}|{$sqString}|[^)]*+)";
+        return "url\((?>[^)\\]++|\\.)*+\)";
     }
 
     public static function cssSelectorsListToken(): string
     {
         $bc = self::blockCommentToken();
 
-        return "(?>[_a-zA-Z0-9:.\#\*,\s>+~\"'^$=|()\[\]-]++|{$bc})++(?={)";
+        return "(?>[_a-zA-Z0-9:.\#\*,\s>+~\"'^$=|()\[\]-]++|{$bc}|\\.)++(?={)";
     }
 
     public static function cssDeclarationsListToken(): string
     {
         $bc = self::blockCommentToken();
+        $dqStr = self::doubleQuoteStringToken();
+        $sqStr = self::singleQuoteStringToken();
+        $url = self::cssUrlToken();
 
-        return "(?>[^{}]++|{$bc})*";
+        return "(?>[^{}@/'\"u\\]++|{$bc}|{$dqStr}|{$sqStr}|{$url}|\\.|u)*";
     }
 
     public static function cssRuleToken(): string
@@ -76,27 +76,33 @@ trait Css
         $cssRule = self::cssRuleToken();
         $bc = self::blockCommentToken();
 
-        return "(?>{$cssRule}|$bc|\s++)+";
+        return "(?>{$cssRule}|{$bc}|\s++)+";
     }
 
     public static function cssRegularAtRulesToken(?string $identifier = null): string
     {
         $bc = self::blockCommentToken();
         $url = self::cssUrlToken();
+        $dqStr = self::doubleQuoteStringToken();
+        $sqStr = self::singleQuoteStringToken();
+
         $name = $identifier ?? '[a-zA-Z-]++';
 
-        return "@{$name}\s++(?>[^;/u{}]++|{$bc}|{$url}|u)++;";
+        return "@{$name}\s++(?>[^;/u{}@\'\"]++|{$bc}|{$url}|{$dqStr}|{$sqStr}|\\.|u)++;";
     }
 
     public static function cssNestedAtRulesToken(): string
     {
         $bc = self::blockCommentToken();
-        $cssRules = self::cssRulesListToken();
+        $cssRulesList = self::cssRulesListToken();
         $regularAtRule = self::cssRegularAtRulesToken();
+        $dqStr = self::doubleQuoteStringToken();
+        $sqStr = self::singleQuoteStringToken();
+        $url = self::cssUrlToken();
 
         //language=RegExp
-        return "(?P<atrule>@[a-zA-Z-]++\s++(?>[^{/;]++|{$bc})++"
-        . "{(?>(?:{$regularAtRule}|{$cssRules}+|{$bc}|\s++)++|(?&atrule))*+})";
+        return "(?P<atrule>@[a-zA-Z-]++\s++(?>[^{}/;@u\\]++|{$bc}|{$url}|{$dqStr}|{$sqStr}|u|\\.)*+"
+        . "{(?>(?:\s++|{$regularAtRule}|{$cssRulesList}+|{$bc})++|(?&atrule))*+})";
     }
 
     public static function cssNamedNestedAtRulesToken(string $identifier): string
@@ -105,7 +111,7 @@ trait Css
         $cssString = self::cssStringToken();
 
         //language=RegExp
-        return "@{$identifier}\s++(?>[^{/;]++|{$bc})++{{$cssString}}";
+        return "@{$identifier}\s++(?>[^{}/;@\]++|{$bc}|\\.)++{{$cssString}+}";
     }
 
     public static function cssStringToken(): string
@@ -115,7 +121,7 @@ trait Css
         $regularAtRule = self::cssRegularAtRulesToken();
         $cssRulesList = self::cssRulesListToken();
 
-        return "(?>{$cssRulesList}+|{$nestedAtRule}|{$regularAtRule}|{$bc}|s++)*";
+        return "(?>\s++|{$cssRulesList}+|{$nestedAtRule}|{$regularAtRule}|{$bc})*";
     }
 
     /**
