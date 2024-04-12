@@ -11,8 +11,6 @@
 
 namespace CodeAlfa\RegexTokenizer;
 
-use function self;
-
 trait Css
 {
     use Base;
@@ -68,7 +66,7 @@ trait Css
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
 
-        return "(?>(?:[*.\#\[\]:0-9a-zA-Z_-]++[\s+~>|=$^*()]*+|{$esc})++|{$bc}|\s++)++";
+        return "(?<=^|[{}/\s;|])(?>[^{}@\\\\'\"]++|{$esc}|{$bc}|{$sqStr}|{$dqStr})++(?={)";
     }
 
     public static function cssDeclarationsListToken(): string
@@ -78,7 +76,7 @@ trait Css
         $sqStr = self::singleQuoteStringToken();
         $esc = self::cssEscapedString();
 
-        return "(?<={)(?>[^{}@/'\"]++|{$bc}|{$dqStr}|{$sqStr}|{$esc}|/++|(?<={)(?=}))++(?=})";
+        return "(?<=[{\s])(?>[^{}@/'\"]++|{$bc}|{$dqStr}|{$sqStr}|{$esc}|/++|(?<={)(?=}))++(?=\s*+})";
     }
 
     public static function cssRuleToken(): string
@@ -86,7 +84,7 @@ trait Css
         $selectors = self::cssSelectorsListToken();
         $declarations = self::cssDeclarationsListToken();
 
-        return "$selectors{{$declarations}+}";
+        return "$selectors{{$declarations}}";
     }
 
     public static function cssRulesListToken(): string
@@ -99,12 +97,14 @@ trait Css
 
     public static function cssRegularAtRulesToken(?string $identifier = null): string
     {
-        $selectors = self::cssSelectorsListToken();
-        $url = self::cssUrlToken();
+        $esc = self::cssEscapedString();
+        $dqStr = self::doubleQuoteStringToken();
+        $sqStr = self::singleQuoteStringToken();
+               $bc = self::blockCommentToken();
 
         $name = $identifier ?? '[a-zA-Z-]++';
 
-        return "@{$name}\s(?>{$selectors}|{$url})++;";
+        return "@{$name}\s(?>[^{}@;'\"\\\\]++|{$esc}|{$bc}|{$dqStr}|{$sqStr})++;";
     }
 
     public static function cssNestedAtRulesToken(): string
@@ -112,11 +112,13 @@ trait Css
         $bc = self::blockCommentToken();
         $cssRulesList = self::cssRulesListToken();
         $regularAtRule = self::cssRegularAtRulesToken();
-        $selectors = self::cssSelectorsListToken();
+        $esc = self::cssEscapedString();
+        $dqStr = self::doubleQuoteStringToken();
+        $sqStr = self::singleQuoteStringToken();
         $declarations = self::cssDeclarationsListToken();
 
         //language=RegExp
-        return "(?P<atrule>@[a-zA-Z-]++\s{$selectors}|$url)++"
+        return "(?P<atrule>@[a-zA-Z-]++\s(?>[^{}@/'\"\\\\]++|{$esc}|{$bc}|{$dqStr}|{$sqStr})*+"
         . "{(?>(?:\s++|{$bc}|{$regularAtRule}|{$cssRulesList}+|{$declarations})++|(?&atrule))*+})";
     }
 
