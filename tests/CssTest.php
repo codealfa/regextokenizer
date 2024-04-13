@@ -378,7 +378,7 @@ textarea {
     /**
      * @dataProvider cssRulesTokenData
      */
-    public function testCssRulesToken($cssRules, $message)
+    public function testCssRulesToken(string $cssRules, string $message): void
     {
         $cssRulesListRegex = self::cssRulesListToken();
 
@@ -386,19 +386,36 @@ textarea {
         $this->assertEquals($cssRules, $matches[0], $message);
     }
 
-    public function testCssRegularAtRulesToken(): void
+    public function cssRegularAtRulesData(): array
+    {
+        return [
+            'import' => [
+                'css' => '@import url("bluish.css") print, screen;',
+                'message' => 'import'
+            ],
+            'namespace' => [
+                'css' => '@namespace svg url(http://www.ws.org/200/svg);',
+                'message' => 'namespace'
+            ],
+            'layer' => [
+                'css' => '@layer module, state;',
+                'message' => 'layer'
+            ]
+        ];
+    }
+    /**
+     * @dataProvider cssRegularAtRulesData
+     */
+    public function testCssRegularAtRulesToken(string $css, string $message): void
     {
         $atRulesRegex = self::cssRegularAtRulesToken();
+        preg_match("#$atRulesRegex#ix", $css, $matches);
+        $this->assertEquals($css, $matches[0], $message . '_regular');
 
-        $this->assertEquals(1, preg_match("#{$atRulesRegex}#ix", '@charset "UTF-8";'), 'match charset');
-        $this->assertEquals(
-            1,
-            preg_match(
-                "#{$atRulesRegex}#ix",
-                '@import url("bluish.css") print, screen;'
-            ),
-            'import with url'
-        );
+        $atNamedRulesRegex = self::cssRegularAtRulesToken($message);
+        preg_match("#$atNamedRulesRegex#ix", $css, $matches);
+        $this->assertEquals($css, $matches[0], $message . '_named');
+
         $this->assertEquals(
             1,
             preg_match(
@@ -407,22 +424,7 @@ textarea {
             ),
             'import with string'
         );
-        $this->assertEquals(
-            1,
-            preg_match(
-                "#{$atRulesRegex}#ix",
-                '@namespace svg url(http://www.w3.org/2000/svg);'
-            ),
-            'namespace'
-        );
-        $this->assertEquals(
-            1,
-            preg_match(
-                "#{$atRulesRegex}#ix",
-                '@layer module, state;'
-            ),
-            'layer'
-        );
+
         $this->assertEquals(
             0,
             preg_match(
@@ -445,14 +447,23 @@ textarea {
     public function cssNestedAtRulesData(): array
     {
         return [
-           'media inside supports' => [ 'css' => /** @lang CSS */ '@supports (display: flex) {
+            'media' => [
+                'css' => /** @lang CSS  */ '@media (400px <= width <= 700px) {
+  body {
+    line-height: 1.4;
+  }
+}',
+                'message' => 'media'
+            ],
+           'supports' => [
+               'css' => /** @lang CSS */ '@supports (display: flex) {
   @media screen and (min-width: 900px) {
     article {
       display: flex;
     }
   }
 }',
-            'message' => 'media inside supports'
+            'message' => 'supports'
                ],
             'scope' => [
                 'css' => /** @lang CSS */'@scope (.article-body) to (figure) {
@@ -551,11 +562,16 @@ textarea {
     /**
      * @dataProvider cssNestedAtRulesData
      */
-    public function testCssNestedAtRulesToken($css, $message): void
+    public function testCssNestedAtRulesToken(string $css, string $message): void
     {
         $atRulesRegex = self::cssNestedAtRulesToken();
 
         preg_match("#{$atRulesRegex}#ix", $css, $matches);
-        $this->assertEquals($css, $matches[0], $message);
+        $this->assertEquals($css, $matches[0], $message . '_nested');
+
+        $atNamesRulesRegex = self::cssNamedNestedAtRulesToken($message);
+
+        preg_match("#{$atNamesRulesRegex}#ix", $css, $matches);
+        $this->assertEquals($css, $matches[0], $message . '_named');
     }
 }

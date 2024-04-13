@@ -28,13 +28,6 @@ trait Css
         return "\\\\[0-9a-zA-Z]++\s*+|\\\\.";
     }
 
-    public static function cssBasicSelectorsString(): string
-    {
-        $esc = self::cssEscapedString();
-
-        return "(?>[*.\#\[\]=:0-9a-zA-Z_-]++|{$esc})++";
-    }
-
     /**
      * Regex token for a CSS url, optionally capturing the value in a capture group
      *
@@ -66,7 +59,7 @@ trait Css
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
 
-        return "(?<=^|[{}/\s;|])(?>[^{}@\\\\'\"]++|{$esc}|{$bc}|{$sqStr}|{$dqStr})++(?={)";
+        return "(?<=^|[{}/\s;|])(?>[a-zA-Z0-9_\s=.:*,\#\[\]()^~|$,>+-]++|{$esc}|{$bc}|{$sqStr}|{$dqStr})++(?={)";
     }
 
     public static function cssDeclarationsListToken(): string
@@ -76,7 +69,7 @@ trait Css
         $sqStr = self::singleQuoteStringToken();
         $esc = self::cssEscapedString();
 
-        return "(?<=[{\s])(?>[^{}@/'\"]++|{$bc}|{$dqStr}|{$sqStr}|{$esc}|/++|(?<={)(?=}))++(?=\s*+})";
+        return "(?<=[{\s])(?>[0-9a-zA-Z_\s()%.,:;\#+*-]++|{$bc}|{$dqStr}|{$sqStr}|{$esc}|/++|(?<={)(?=}))++(?=\s*+})";
     }
 
     public static function cssRuleToken(): string
@@ -100,11 +93,11 @@ trait Css
         $esc = self::cssEscapedString();
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
-               $bc = self::blockCommentToken();
+        $bc = self::blockCommentToken();
 
         $name = $identifier ?? '[a-zA-Z-]++';
 
-        return "@{$name}\s(?>[^{}@;'\"\\\\]++|{$esc}|{$bc}|{$dqStr}|{$sqStr})++;";
+        return "@{$name}\s(?>[0-9a-zA-Z_.,:()\s-]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)++;";
     }
 
     public static function cssNestedAtRulesToken(): string
@@ -118,7 +111,7 @@ trait Css
         $declarations = self::cssDeclarationsListToken();
 
         //language=RegExp
-        return "(?P<atrule>@[a-zA-Z-]++\s(?>[^{}@/'\"\\\\]++|{$esc}|{$bc}|{$dqStr}|{$sqStr})*+"
+        return "(?P<atrule>@[a-zA-Z-]++\s(?>[0-9a-zA-Z_.,:()\s=<>+*-]++|{$esc}|{$bc}|{$dqStr}|{$sqStr})*+"
         . "{(?>(?:\s++|{$bc}|{$regularAtRule}|{$cssRulesList}+|{$declarations})++|(?&atrule))*+})";
     }
 
@@ -127,12 +120,13 @@ trait Css
         $bc = self::blockCommentToken();
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
-        $selectors = self::cssSelectorsListToken();
         $esc = self::cssEscapedString();
 
+        $name = str_replace('-', '', $identifier);
+
         //language=RegExp
-        return "@{$identifier}\s+{$selectors}"
-        . "(?P<nestedblock>{(?>(?:[^{}/\\\\'\"]++|{$bc}|{$dqStr}|{$sqStr}|{$esc}|/)++|(?&nestedblock))*+})";
+        return "@{$identifier}\s(?>[^{}@/'\"\\\\]++|{$esc}|{$bc}|{$dqStr}|{$sqStr})*+"
+        . "(?P<{$name}>{(?>(?:[^{}/\\\\'\"]++|{$bc}|{$dqStr}|{$sqStr}|{$esc}|/)++|(?&{$name}))*+})";
     }
 
     public static function cssStringToken(): string
