@@ -231,10 +231,31 @@ shape-image-threshold: 0.7;',
                 'declaration' => 'lch(from blue calc(l + 20) c h)',
                 'message' => 'color'
             ],
-            [
+            'empty' => [
                 'cssRule' => /** @lang CSS */ 'div {}',
                 'declaration' => '',
                 'message' => 'empty'
+            ],
+            'starting-style' => [
+                'cssRule' => /** @lang CSS */ '#target {
+  transition-property: opacity, display;
+  transition-duration: 0.5s;
+  display: block;
+  opacity: 1;
+  @starting-style {
+    opacity: 0;
+  }
+}',
+                'declaration' => '
+  transition-property: opacity, display;
+  transition-duration: 0.5s;
+  display: block;
+  opacity: 1;
+  @starting-style {
+    opacity: 0;
+  }
+',
+                'message' => 'starting-style'
             ]
         ];
     }
@@ -382,7 +403,7 @@ textarea {
     {
         $cssRulesListRegex = self::cssRulesListToken();
 
-        preg_match("#{$cssRulesListRegex}?$#ix", $cssRules, $matches);
+        preg_match("#{$cssRulesListRegex}$#ix", $cssRules, $matches);
         $this->assertEquals($cssRules, $matches[0], $message);
     }
 
