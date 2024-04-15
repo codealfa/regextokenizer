@@ -52,17 +52,17 @@ trait Css
         return "url\((?>{$dqStr}|{$sqStr}|(?:[^)\\\\]++|{$esc})++)*+\)";
     }
 
-    public static function cssSelectorsListToken(): string
+    public static function cssSelectorListToken(): string
     {
         $bc = self::blockCommentToken();
         $esc = self::cssEscapedString();
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
 
-        return "(?<=^|[{}/\s;|])(?>[a-zA-Z0-9_\s=.:*,\#\[\]()^~|$,>+-]++|{$esc}|{$bc}|{$sqStr}|{$dqStr})++(?={)";
+        return "(?<=^|[{}/\s;|])(?>[a-zA-Z0-9_\s=.:*,\#\[\]()^~|$&,>+-]++|{$esc}|{$bc}|{$sqStr}|{$dqStr})++(?={)";
     }
 
-    public static function cssDeclarationsListToken(): string
+    public static function cssDeclarationListToken(): string
     {
         $bc = self::blockCommentToken();
         $dqStr = self::doubleQuoteStringToken();
@@ -76,13 +76,13 @@ trait Css
 
     public static function cssRuleToken(): string
     {
-        $selectors = self::cssSelectorsListToken();
-        $declarations = self::cssDeclarationsListToken();
+        $selectors = self::cssSelectorListToken();
+        $declarations = self::cssDeclarationListToken();
 
         return "$selectors{{$declarations}}";
     }
 
-    public static function cssRulesListToken(): string
+    public static function cssRuleListToken(): string
     {
         $cssRule = self::cssRuleToken();
         $bc = self::blockCommentToken();
@@ -105,13 +105,13 @@ trait Css
     public static function cssNestedAtRulesToken(): string
     {
         $bc = self::blockCommentToken();
-        $cssRulesList = self::cssRulesListToken();
+        $cssRulesList = self::cssRuleListToken();
         $regularAtRule = self::cssRegularAtRulesToken();
         $esc = self::cssEscapedString();
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
-        $declarations = self::cssDeclarationsListToken();
-        $selectors = self::cssSelectorsListToken();
+        $declarations = self::cssDeclarationListToken();
+        $selectors = self::cssSelectorListToken();
 
         static $cnt = 0;
         $name = 'nestedatrule' . $cnt++;
@@ -140,7 +140,7 @@ trait Css
         $bc = self::blockCommentToken();
         $nestedAtRule = self::cssNestedAtRulesToken();
         $regularAtRule = self::cssRegularAtRulesToken();
-        $cssRulesList = self::cssRulesListToken();
+        $cssRulesList = self::cssRuleListToken();
 
         return "(?>\s++|{$cssRulesList}|{$nestedAtRule}|{$regularAtRule}|{$bc})*";
     }

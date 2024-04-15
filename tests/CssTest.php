@@ -173,7 +173,7 @@ class CssTest extends TestCase
      */
     public function testCssSelectorsListToken($cssRule, $selector, $message): void
     {
-        $selectorsList = self::cssSelectorsListToken();
+        $selectorsList = self::cssSelectorListToken();
 
         preg_match("#{$selectorsList}#ix", $cssRule, $matches);
         $this->assertEquals($selector, $matches[0], $message);
@@ -265,7 +265,7 @@ shape-image-threshold: 0.7;',
      */
     public function testCssDeclarationListToken($cssRule, $declaration, $message): void
     {
-        $declarationsList = self::cssDeclarationsListToken();
+        $declarationsList = self::cssDeclarationListToken();
 
         preg_match("#{$declarationsList}#ix", $cssRule, $matches);
         $this->assertEquals($declaration, $matches[0], $message);
@@ -401,7 +401,7 @@ textarea {
      */
     public function testCssRulesToken(string $cssRules, string $message): void
     {
-        $cssRulesListRegex = self::cssRulesListToken();
+        $cssRulesListRegex = self::cssRuleListToken();
 
         preg_match("#{$cssRulesListRegex}$#ix", $cssRules, $matches);
         $this->assertEquals($cssRules, $matches[0], $message);
