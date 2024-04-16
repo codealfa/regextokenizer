@@ -402,6 +402,7 @@ textarea {
     public function testCssRulesToken(string $cssRules, string $message): void
     {
         $cssRulesListRegex = self::cssRuleListToken();
+        $cssString = self::cssStringToken();
 
         preg_match("#{$cssRulesListRegex}$#ix", $cssRules, $matches);
         $this->assertEquals($cssRules, $matches[0], $message);
