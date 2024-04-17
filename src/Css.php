@@ -59,7 +59,7 @@ trait Css
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
 
-        return "(?<=^|[{}/\s;|])(?>[^{}@/\\\\'\"]++|{$esc}|{$bc}|{$sqStr}|{$dqStr})++(?=\s*+{)";
+        return "(?<=^|[{}/\s;|])[^{}@/\\\\'\"\s;]++(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$sqStr}|{$dqStr})*+(?={)";
     }
 
     public static function cssDeclarationListToken(): string
@@ -70,8 +70,8 @@ trait Css
         $esc = self::cssEscapedString();
         $startingStyle = self::cssNamedNestedAtRulesToken('starting-style');
 
-        return "(?<=[{\s])(?>(?>[^{}@/\\\\'\"]++|{$bc}|{$dqStr}|{$sqStr}|{$esc}|/++|(?<={)(?=}))++"
-        . "|{$startingStyle})++(?=\s*+})";
+        return "(?<={)(?>(?>[^{}@/\\\\'\"]++|{$bc}|{$dqStr}|{$sqStr}|{$esc}|/++|(?<={)(?=}))++"
+        . "|{$startingStyle})++(?=})";
     }
 
     public static function cssRuleToken(): string
@@ -99,7 +99,7 @@ trait Css
 
         $name = $identifier ?? '[a-zA-Z-]++';
 
-        return "@{$name}\s(?>[^{}@/\\\\'\"]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)++;";
+        return "@{$name}\s(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)++;";
     }
 
     public static function cssNestedAtRulesToken(): string
@@ -116,8 +116,8 @@ trait Css
         static $cnt = 0;
         $name = 'nestedatrule' . $cnt++;
         //language=RegExp
-        return "(?P<{$name}>@[a-zA-Z-]++\s(?>[^{}@/\\\\'\"]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)*+"
-        . "{(?>(?:\s++|{$bc}|{$regularAtRule}|{$cssRulesList}|{$declarations})++|(?&$name))*+})";
+        return "(?P<{$name}>@[a-zA-Z-]++\s(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)*+"
+        . "{(?>(?:{$declarations}|(?>\s++|{$bc}|{$regularAtRule}|{$cssRulesList})++)++|(?&$name))*+})";
     }
 
     public static function cssNamedNestedAtRulesToken(string $identifier): string
