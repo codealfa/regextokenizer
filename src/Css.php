@@ -20,7 +20,7 @@ trait Css
     {
         $esc = self::cssEscapedString();
 
-        return "(?>[a-zA-Z0-9_-]++|{$esc})++";
+        return "(?>{$esc}|[a-zA-Z0-9_-]++)++";
     }
 
     public static function cssEscapedString(): string
@@ -49,7 +49,7 @@ trait Css
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
 
-        return "url\((?>{$dqStr}|{$sqStr}|(?:[^)\\\\]++|{$esc})++)*+\)";
+        return "url\((?>{$dqStr}|{$sqStr}|(?:{$esc}|[^)\\\\]++)++)*+\)";
     }
 
     public static function cssSelectorListToken(): string
@@ -87,7 +87,7 @@ trait Css
         $cssRule = self::cssRuleToken();
         $bc = self::blockCommentToken();
 
-        return "(?>{$cssRule}|{$bc}|\s++)++";
+        return "(?>\s++|{$bc}|{$cssRule})++";
     }
 
     public static function cssRegularAtRulesToken(?string $identifier = null): string
@@ -142,7 +142,7 @@ trait Css
         $regularAtRule = self::cssRegularAtRulesToken();
         $cssRulesList = self::cssRuleListToken();
 
-        return "(?>\s++|{$cssRulesList}|{$nestedAtRule}|{$regularAtRule}|{$bc})*";
+        return "(?>\s++|{$bc}|{$cssRulesList}|{$nestedAtRule}|{$regularAtRule})*";
     }
 
     /**
