@@ -116,7 +116,7 @@ trait Css
         static $cnt = 0;
         $name = 'nestedatrule' . $cnt++;
         //language=RegExp
-        return "(?P<{$name}>@[a-zA-Z-]++\s(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)*+"
+        return "(?P<{$name}>@[a-zA-Z-]++\s*+(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)*+"
         . "{(?>(?:{$declarations}|(?>\s++|{$bc}|{$regularAtRule}|{$cssRulesList})++)++|(?&$name))*+})";
     }
 
