@@ -591,7 +591,7 @@ textarea {
         preg_match("#{$atRulesRegex}#ix", $css, $matches);
         $this->assertEquals($css, $matches[0], $message . '_nested');
 
-        $atNamesRulesRegex = self::cssNamedNestedAtRulesToken($message);
+        $atNamesRulesRegex = self::cssNestedAtRulesToken($message);
 
         preg_match("#{$atNamesRulesRegex}#ix", $css, $matches);
         $this->assertEquals($css, $matches[0], $message . '_named');
