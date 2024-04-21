@@ -28,21 +28,6 @@ trait Css
         return "\\\\[0-9a-zA-Z]++\s*+|\\\\.";
     }
 
-    /**
-     * Regex token for a CSS url, optionally capturing the value in a capture group
-     *
-     * @param   bool  $shouldCaptureValue Whether to capture the value in a capture group
-     *
-     * @return string
-     */
-    //language=RegExp
-    public static function cssUrlWithCaptureValueToken(bool $shouldCaptureValue = false): string
-    {
-        $cssUrl = '(?:url\(|(?<=url)\()(?:\s*+[\'"])?<<' . self::cssUrlValueToken() . '>>(?:[\'"]\s*+)?\)';
-
-        return self::prepare($cssUrl, $shouldCaptureValue);
-    }
-
     public static function cssUrlToken(): string
     {
         $esc = self::cssEscapedString();
@@ -115,7 +100,7 @@ trait Css
         $captureGroup = 'atrule' . $cnt++;
         //language=RegExp
         return "@{$name}\s*+(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)*+"
-        . "(?P<{$captureGroup}>{(?>(?:[^{}/]++|{$bc})++|(?&$captureGroup))*+})";
+        . "(?P<{$captureGroup}>{(?>(?:[^{}/\\\\'\"]++|{$bc}|{$esc}|{$dqStr}|{$sqStr})++|(?&$captureGroup))*+})";
     }
 
     public static function cssStringToken(): string
@@ -126,27 +111,5 @@ trait Css
         $cssRuleList = self::cssRuleListToken();
 
         return "(?>\s++|{$bc}|{$cssRuleList}|{$nestedAtRule}|{$regularAtRule})*";
-    }
-
-    /**
-     * Regex token for a CSS url value
-     *
-     * @return string
-     */
-    //language=RegExp
-    public static function cssUrlValueToken(): string
-    {
-        return '(?:' . self::stringValueToken() . '|' . self::cssUnquotedUrlValueToken() . ')';
-    }
-
-    /**
-     * Regex token for an unquoted CSS url value
-     *
-     * @return string
-     */
-    //language=RegExp
-    public static function cssUnquotedUrlValueToken(): string
-    {
-        return '(?<=url\()(?>\s*+(?:\\\\.)?[^\\\\()\s\'"]*+)++';
     }
 }
