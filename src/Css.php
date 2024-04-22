@@ -100,7 +100,7 @@ trait Css
         $captureGroup = 'atrule' . $cnt++;
         //language=RegExp
         return "@{$name}\s*+(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)*+"
-        . "(?P<{$captureGroup}>{(?>(?:[^{}/\\\\'\"]++|{$bc}|{$esc}|{$dqStr}|{$sqStr})++|(?&$captureGroup))*+})";
+        . "(?P<{$captureGroup}>{(?>(?:[^{}/\\\\'\"]++|{$bc}|{$esc}|{$dqStr}|{$sqStr}|/)++|(?&$captureGroup))*+})";
     }
 
     public static function cssStringToken(): string

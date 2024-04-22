@@ -596,4 +596,57 @@ textarea {
         preg_match("#{$atNamesRulesRegex}#ix", $css, $matches);
         $this->assertEquals($css, $matches[0], $message . '_named');
     }
+
+    public function cssStringData(): array
+    {
+        return [
+            'bootstrap' => [
+                'name' => 'bootstrap'
+            ],
+            'bulma' => [
+                'name' => 'bulma'
+            ],
+            'foundation' => [
+                'name' => 'foundation'
+            ],
+            'uikit' => [
+                'name' => 'uikit'
+            ],
+            'pico' => [
+                'name' => 'pico'
+            ],
+            'cirrus' => [
+                'name' => 'cirrus'
+            ],
+            'vanilla-framework' => [
+                'name' => 'vanilla-framework'
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider cssStringData
+     */
+    public function testCssStringToken(string $name): void
+    {
+        $cssStringRegex = self::cssStringToken();
+
+        $css = $this->getCss($name);
+        preg_match("#^{$cssStringRegex}+$#ix", $css, $matches);
+        $this->assertEquals($css, $matches[0], $name . '.css');
+
+        $cssMin = $this->getCssMin($name);
+        preg_match("#{$cssStringRegex}#ix", $cssMin, $matches);
+        $this->assertEquals($cssMin, $matches[0], $name . '.min.css');
+    }
+
+    private function getCss(string $name): string
+    {
+        return file_get_contents(__DIR__ . "/_data/css/{$name}.css");
+    }
+
+    private function getCssMin(string $name): string
+    {
+        return file_get_contents(__DIR__ . "/_data/css/min/{$name}.min.css");
+    }
 }
