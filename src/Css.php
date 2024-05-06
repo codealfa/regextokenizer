@@ -108,8 +108,8 @@ trait Css
         $bc = self::blockCommentToken();
         $nestedAtRule = self::cssNestedAtRulesToken();
         $regularAtRule = self::cssRegularAtRulesToken();
-        $cssRuleList = self::cssRuleListToken();
+        $cssRule = self::cssRuleToken();
 
-        return "(?>\s++|{$bc}|{$cssRuleList}|{$nestedAtRule}|{$regularAtRule})*";
+        return "(?>\s++|{$bc}|{$cssRule}|{$nestedAtRule}|{$regularAtRule})*";
     }
 }
