@@ -93,7 +93,7 @@ trait Html
         $ss = self::singleQuoteStringToken();
         $bs = self::backTickStringToken();
 
-        return "[^\s/\"'=<>]++(?:\s*+=\s*+(?>{$ds}|{$ss}|{$bs}|(?<==)[^\s<>'\"]++))?";
+        return "[^\s/\"'=<>`]++(?:\s*+=\s*+(?>{$ds}|{$ss}|{$bs}|(?<==)[^\s<>'\"`]++))?";
     }
 
     public static function htmlAttributesListToken(): string
@@ -108,7 +108,7 @@ trait Html
         $element = $name ?? self::htmlGenericElementToken();
         $attributes = $attributes ? self::htmlAttributesListToken() : '[^>]*';
 
-        return "<{$element}\b\s*+{$attributes}+\s*+/?>";
+        return "<{$element}\b(\s++{$attributes}+)?/?>";
     }
 
     public static function htmlEndTagToken(?string $name = null): string
