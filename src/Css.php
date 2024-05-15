@@ -18,19 +18,14 @@ trait Css
     //language=RegExp
     public static function cssIdentToken(): string
     {
-        $esc = self::cssEscapedString();
+        $esc = self::escapedString();
 
         return "(?>{$esc}|[a-zA-Z0-9_-]++)++";
     }
 
-    public static function cssEscapedString(): string
-    {
-        return "\\\\[0-9a-zA-Z]++\s*+|\\\\.";
-    }
-
     public static function cssUrlToken(): string
     {
-        $esc = self::cssEscapedString();
+        $esc = self::escapedString();
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
 
@@ -40,7 +35,7 @@ trait Css
     public static function cssSelectorListToken(): string
     {
         $bc = self::blockCommentToken();
-        $esc = self::cssEscapedString();
+        $esc = self::escapedString();
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
 
@@ -52,7 +47,7 @@ trait Css
         $bc = self::blockCommentToken();
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
-        $esc = self::cssEscapedString();
+        $esc = self::escapedString();
         $startingStyle = self::cssNestedAtRulesToken('starting-style');
 
         return "(?<={)(?>(?>[^{}@/\\\\'\"]++|{$bc}|{$dqStr}|{$sqStr}|{$esc}|[/\\\\]++|(?<={)(?=}))++"
@@ -77,7 +72,7 @@ trait Css
 
     public static function cssRegularAtRulesToken(?string $name = null): string
     {
-        $esc = self::cssEscapedString();
+        $esc = self::escapedString();
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
         $bc = self::blockCommentToken();
@@ -90,7 +85,7 @@ trait Css
     public static function cssNestedAtRulesToken(?string $name = null): string
     {
         $bc = self::blockCommentToken();
-        $esc = self::cssEscapedString();
+        $esc = self::escapedString();
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
 

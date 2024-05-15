@@ -13,13 +13,15 @@ namespace CodeAlfa\RegexTokenizer;
 
 use CodeAlfa\RegexTokenizer\Debug\Debug;
 use Exception;
-use Throwable;
-
-use function assert;
 
 trait Base
 {
     use Debug;
+
+    public static function escapedString(): string
+    {
+        return "\\\\[0-9a-zA-Z]++\s*+|\\\\.";
+    }
 
     /**
      * Regex token for a string inside double quotes
@@ -173,11 +175,11 @@ trait Base
      * @return void
      * @throws Exception
      */
-    protected static function throwExceptionOnPregError()
+    protected static function throwExceptionOnPregError(): void
     {
         $error = array_flip(
             array_filter(get_defined_constants(true)['pcre'], function (string $value) {
-                return substr($value, -6) === '_ERROR';
+                return str_ends_with($value, '_ERROR');
             }, ARRAY_FILTER_USE_KEY)
         )[preg_last_error()];
 
