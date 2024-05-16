@@ -15,17 +15,21 @@ trait Css
 {
     use Base;
 
+    public static function cssEscapedString(): string
+    {
+        return "\\\\[0-9a-fA-F]++\s?|\\\\[^0-9a-fA-F\r\n]";
+    }
     //language=RegExp
     public static function cssIdentToken(): string
     {
-        $esc = self::escapedString();
+        $esc = self::cssEscapedString();
 
         return "(?>{$esc}|[a-zA-Z0-9_-]++)++";
     }
 
     public static function cssUrlToken(): string
     {
-        $esc = self::escapedString();
+        $esc = self::cssEscapedString();
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
 
@@ -35,7 +39,7 @@ trait Css
     public static function cssSelectorListToken(): string
     {
         $bc = self::blockCommentToken();
-        $esc = self::escapedString();
+        $esc = self::cssEscapedString();
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
 
@@ -47,7 +51,7 @@ trait Css
         $bc = self::blockCommentToken();
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
-        $esc = self::escapedString();
+        $esc = self::cssEscapedString();
         $startingStyle = self::cssNestedAtRulesToken('starting-style');
 
         return "(?<={)(?>(?>[^{}@/\\\\'\"]++|{$bc}|{$dqStr}|{$sqStr}|{$esc}|[/\\\\]++|(?<={)(?=}))++"
@@ -72,7 +76,7 @@ trait Css
 
     public static function cssRegularAtRulesToken(?string $name = null): string
     {
-        $esc = self::escapedString();
+        $esc = self::cssEscapedString();
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
         $bc = self::blockCommentToken();
@@ -85,7 +89,7 @@ trait Css
     public static function cssNestedAtRulesToken(?string $name = null): string
     {
         $bc = self::blockCommentToken();
-        $esc = self::escapedString();
+        $esc = self::cssEscapedString();
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
 

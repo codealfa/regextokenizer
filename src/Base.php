@@ -18,11 +18,6 @@ trait Base
 {
     use Debug;
 
-    public static function escapedString(): string
-    {
-        return "\\\\[0-9a-zA-Z]++\s*+|\\\\.";
-    }
-
     /**
      * Regex token for a string inside double quotes
      *
