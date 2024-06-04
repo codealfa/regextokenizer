@@ -81,7 +81,7 @@ class HtmlTest extends TestCase
         $this->assertEquals($attributes, $matches[0], 'attributes list');
     }
 
-    public function htmlHeadTagData(): array
+    public function htmlStartTagData(): array
     {
         return [
             [
@@ -101,14 +101,14 @@ class HtmlTest extends TestCase
                 'message' => 'no attributes'
             ],
             [
-                'tag' => '<link rel="stylesheet" src="http://www.example.com/style.css" />',
-                'message' => 'self closing'
+                'tag' => '<style media="all"title="basic" >',
+                'message' => 'attributes touching'
             ]
         ];
     }
 
     /**
-     * @dataProvider htmlHeadTagData
+     * @dataProvider htmlStartTagData
      */
     public function testHtmlStartTagToken(string $tag, string $message): void
     {
@@ -146,7 +146,7 @@ class HtmlTest extends TestCase
      */
     public function testHtmlElementToken(string $tag, ?string $name, ?bool $voidElement, string $message): void
     {
-        $el = self::htmlElementToken($name, $voidElement);
+        $el = $voidElement ? self::htmlVoidElementToken($name) : self::htmlElementToken($name);
 
         preg_match("#{$el}#ix", $tag, $matches);
         $this->assertEquals($tag, $matches[0], $message);
