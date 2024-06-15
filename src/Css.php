@@ -52,9 +52,10 @@ trait Css
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
         $esc = self::cssEscapedString();
+        $url = self::cssUrlToken();
         $startingStyle = self::cssNestedAtRulesToken('starting-style');
 
-        return "(?<={)(?>(?>[^{}@/\\\\'\"]++|{$bc}|{$dqStr}|{$sqStr}|{$esc}|[/\\\\]++|(?<={)(?=}))++"
+        return "(?<={)(?>(?>[^{}@/\\\\'\"u]++|{$bc}|{$dqStr}|{$sqStr}|{$esc}|{$url}|[/\\\\u]++|(?<={)(?=}))++"
         . "|{$startingStyle})++(?=})";
     }
 
