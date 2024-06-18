@@ -33,7 +33,7 @@ trait Css
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
 
-        return "url\((?>{$dqStr}|{$sqStr}|(?:{$esc}|[^)\\\\]++)++)*+\)";
+        return "url\(\s*+(?>{$dqStr}|{$sqStr}|(?:{$esc}|[^)\\\\]++)++)\s*+\)";
     }
 
     public static function cssSelectorListToken(): string
