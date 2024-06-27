@@ -99,7 +99,7 @@ trait Css
         static $cnt = 0;
         $captureGroup = 'atrule' . $cnt++;
         //language=RegExp
-        return "@{$name}\s*+(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)*+"
+        return "@(?:-[^-]++-)?{$name}\s*+(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)*+"
         . "(?P<{$captureGroup}>{(?>(?:[^{}/\\\\'\"]++|{$bc}|{$esc}|{$dqStr}|{$sqStr}|/)++|(?&$captureGroup))*+})";
     }
 
