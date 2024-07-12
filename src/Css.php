@@ -53,10 +53,10 @@ trait Css
         $sqStr = self::singleQuoteStringToken();
         $esc = self::cssEscapedString();
         $url = self::cssUrlToken();
-        $startingStyle = self::cssNestedAtRulesToken('starting-style');
+        $nestedRule = self::cssNestedAtRulesToken();
 
         return "(?<={)(?>(?>[^{}@/\\\\'\"u]++|{$bc}|{$dqStr}|{$sqStr}|{$esc}|{$url}|[/\\\\u]++|(?<={)(?=}))++"
-        . "|{$startingStyle})++(?=})";
+        . "|{$nestedRule})++(?=})";
     }
 
     public static function cssRuleToken(): string
