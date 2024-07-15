@@ -165,6 +165,11 @@ class CssTest extends TestCase
                 'selector' => '.\31 234',
                 'message' => 'another escaped selector'
             ],
+            'nesting rule' => [
+                'cssRule' => /** @lang CSS */ 'label {font-family: system-ui; input{border: blue 2px dashed;}}',
+                'selector' => 'label ',
+                'message' => 'nesting rule'
+            ]
         ];
     }
 
@@ -256,6 +261,11 @@ shape-image-threshold: 0.7;',
   }
 ',
                 'message' => 'starting-style'
+            ],
+            'nesting rule' => [
+                'cssRule' => /** @lang CSS */ 'label {font-family: system-ui; input{border: blue 2px dashed;}}',
+                'declaration' => 'font-family: system-ui; input{border: blue 2px dashed;}',
+                'message' => 'nesting rule'
             ]
         ];
     }
@@ -295,6 +305,18 @@ input[type="search"]::-webkit-search-cancel-button {
   color: hotpink;
 }',
                 'message' => 'attr'
+            ],
+            [
+                'nesting Css rule' => <<<CSS
+label {
+    font-family: system-ui; 
+    input {
+        border: blue 2px dashed;
+    }
+}
+CSS,
+                'message' => 'nesting CSS rule'
+
             ]
         ];
     }
@@ -586,12 +608,12 @@ textarea {
      */
     public function testCssNestedAtRulesToken(string $css, string $message): void
     {
-        $atRulesRegex = self::cssNestedAtRulesToken();
+        $atRulesRegex = self::cssNestingAtRulesToken();
 
         preg_match("#{$atRulesRegex}#ix", $css, $matches);
         $this->assertEquals($css, $matches[0], $message . '_nested');
 
-        $atNamesRulesRegex = self::cssNestedAtRulesToken($message);
+        $atNamesRulesRegex = self::cssNestingAtRulesToken($message);
 
         preg_match("#{$atNamesRulesRegex}#ix", $css, $matches);
         $this->assertEquals($css, $matches[0], $message . '_named');

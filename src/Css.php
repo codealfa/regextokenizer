@@ -43,7 +43,7 @@ trait Css
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
 
-        return "(?<=^|[{}/\s;|])[^{}@/\\\\'\"\s;]++(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$sqStr}|{$dqStr})*+(?={)";
+        return "(?<=^|[{}/\s;])[^{}@/\\\\'\"\s;]++(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$sqStr}|{$dqStr})*+(?={)";
     }
 
     public static function cssDeclarationListToken(): string
@@ -53,18 +53,19 @@ trait Css
         $sqStr = self::singleQuoteStringToken();
         $esc = self::cssEscapedString();
         $url = self::cssUrlToken();
-        $nestedRule = self::cssNestedAtRulesToken();
+        $nestingAtRule = self::cssNestingAtRulesToken();
+        $nestingRule = self::cssBlockToken();
 
         return "(?<={)(?>(?>[^{}@/\\\\'\"u]++|{$bc}|{$dqStr}|{$sqStr}|{$esc}|{$url}|[/\\\\u]++|(?<={)(?=}))++"
-        . "|{$nestedRule})++(?=})";
+        . "|{$nestingAtRule}|$nestingRule)++(?=})";
     }
 
     public static function cssRuleToken(): string
     {
         $selectors = self::cssSelectorListToken();
-        $declarations = self::cssDeclarationListToken();
+        $cssBlock = self::cssBlockToken();
 
-        return "$selectors{{$declarations}}";
+        return "{$selectors}{$cssBlock}";
     }
 
     public static function cssRuleListToken(): string
@@ -87,26 +88,37 @@ trait Css
         return "@{$name}\s(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)++;";
     }
 
-    public static function cssNestedAtRulesToken(?string $name = null): string
+    public static function cssBlockToken(): string
     {
         $bc = self::blockCommentToken();
         $esc = self::cssEscapedString();
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
 
+        static $cnt = 0;
+        $cssBlock = 'cssBlock' . $cnt++;
+
+        return "(?P<{$cssBlock}>{(?>(?:[^{}/\\\\'\"]++|{$bc}|{$esc}|{$dqStr}|{$sqStr}|/)++|(?&$cssBlock))*+})";
+    }
+
+    public static function cssNestingAtRulesToken(?string $name = null): string
+    {
+        $bc = self::blockCommentToken();
+        $esc = self::cssEscapedString();
+        $dqStr = self::doubleQuoteStringToken();
+        $sqStr = self::singleQuoteStringToken();
+        $cssBlock = self::cssBlockToken();
+
         $name = $name ?? '[a-zA-Z-]++';
 
-        static $cnt = 0;
-        $captureGroup = 'atrule' . $cnt++;
         //language=RegExp
-        return "@(?:-[^-]++-)?{$name}\s*+(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)*+"
-        . "(?P<{$captureGroup}>{(?>(?:[^{}/\\\\'\"]++|{$bc}|{$esc}|{$dqStr}|{$sqStr}|/)++|(?&$captureGroup))*+})";
+        return "@(?:-[^-]++-)?{$name}\s*+(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)*+{$cssBlock}";
     }
 
     public static function cssStringToken(): string
     {
         $bc = self::blockCommentToken();
-        $nestedAtRule = self::cssNestedAtRulesToken();
+        $nestedAtRule = self::cssNestingAtRulesToken();
         $regularAtRule = self::cssRegularAtRulesToken();
         $cssRule = self::cssRuleToken();
 
