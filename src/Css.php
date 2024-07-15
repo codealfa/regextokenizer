@@ -82,10 +82,11 @@ trait Css
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
         $bc = self::blockCommentToken();
+        $url = self::cssUrlToken();
 
         $name = $name ?? '[a-zA-Z-]++';
 
-        return "@{$name}\s(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)++;";
+        return "@{$name}\s(?>[^{}@/\\\\'\"u;]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|{$url}|[/u])++;";
     }
 
     public static function cssBlockToken(): string
@@ -108,11 +109,12 @@ trait Css
         $dqStr = self::doubleQuoteStringToken();
         $sqStr = self::singleQuoteStringToken();
         $cssBlock = self::cssBlockToken();
+        $url = self::cssUrlToken();
 
         $name = $name ?? '[a-zA-Z-]++';
 
         //language=RegExp
-        return "@(?:-[^-]++-)?{$name}\s*+(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|/)*+{$cssBlock}";
+        return "@(?:-[^-]++-)?{$name}\s*+(?>[^{}@/\\\\'\"u;]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|{$url}|[/u])*+$cssBlock";
     }
 
     public static function cssStringToken(): string

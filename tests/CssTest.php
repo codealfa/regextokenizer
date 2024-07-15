@@ -528,7 +528,7 @@ textarea {
                 'starting-style'
             ],
             'document' => [
-                'css' => /** @lang CSS */ '@document url("https://www.example.com/")
+                'css' => /** @lang CSS */ '@document url(https://www.example.com/page@2/)
 {
   h1 {
     color: green;
