@@ -46,6 +46,19 @@ trait Css
         return "(?<=^|[{}/\s;])[^{}@/\\\\'\"\s;]++(?>[^{}@/\\\\'\";]++|{$esc}|{$bc}|{$sqStr}|{$dqStr})*+(?={)";
     }
 
+    public static function cssDeclarationToken(): string
+    {
+        $ident = self::cssIdentToken();
+        $dqStr = self::doubleQuoteStringToken();
+        $sqStr = self::singleQuoteStringToken();
+        $bc = self::blockCommentToken();
+        $esc = self::cssEscapedString();
+        $brc = '(?<brc>\((?>[^()]++|(?&brc))*+\))';
+
+        return "(?>{$ident}|\s++|{$bc})*?:"
+            . "(?>[^/()'\";{}@\\\\]++|{$brc}|{$dqStr}|{$sqStr}|{$bc}|{$esc}|[/])*?(?:;|$|(?=}))";
+    }
+
     public static function cssDeclarationListToken(): string
     {
         $bc = self::blockCommentToken();
