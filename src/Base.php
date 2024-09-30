@@ -33,7 +33,7 @@ trait Base
      * Regex token for the value of a string inside double quotes
      *
      * @return string
-     * @deprecated
+     * @deprecated  Will be removed in 3.0
      */
     //language=RegExp
     public static function doubleQuoteStringValueToken(): string
@@ -56,7 +56,7 @@ trait Base
      * Regex token for the value of a string inside single quotes
      *
      * @return string
-     * @deprecated
+     * @deprecated Will be removed in 3.0
      */
     //language=RegExp
     public static function singleQuoteStringValueToken(): string
@@ -79,7 +79,7 @@ trait Base
      * Regex token for the value of a string inside back ticks
      *
      * @return string
-     * @deprecated
+     * @deprecated Will be removed in 3.0
      */
     //language=RegExp
     public static function backTickStringValueToken(): string
@@ -118,7 +118,7 @@ trait Base
      * @param bool $shouldCaptureValue Whether value should be captured
      *
      * @return string
-     * @deprecated
+     * @deprecated Will be removed in 3.0
      */
     //language=RegExp
     private static function prepare(string $regex, bool $shouldCaptureValue): string

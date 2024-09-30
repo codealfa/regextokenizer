@@ -71,6 +71,86 @@ trait Html
         return '[a-zA-Z0-9-]++';
     }
 
+    /**
+     * Regex for parsing an HTML attribute
+     *
+     * @return string
+     * @deprecated Will be removed in 3.0
+     */
+    //language=RegExp
+    protected static function parseAttributesStatic(): string
+    {
+        return '(?>' . self::htmlAttributeWithCaptureValueToken() . '\s*+)*?';
+    }
+
+    /**
+     * Regex token for an HTML attribute, optionally capturing the value in a capture group
+     *
+     * @param string $attrName
+     * @param bool $captureValue
+     * @param bool $captureDelimiter
+     * @param string $matchedValue
+     *
+     * @return string
+     * @deprecated Will be removed in 3.0
+     */
+    //language=RegExp
+    public static function htmlAttributeWithCaptureValueToken(
+        string $attrName = '',
+        bool $captureValue = false,
+        bool $captureDelimiter = false,
+        string $matchedValue = ''
+    ): string {
+        $name = $attrName != '' ? $attrName : '[^\s/"\'=<>]++';
+        $delimiter = $captureDelimiter ? '([\'"]?)' : '[\'"]?';
+
+        //If we don't need to match a value then the value of attribute is optional
+        if ($matchedValue == '') {
+            $attribute = $name . '(?:\s*+=\s*+(?>' . $delimiter . ')<<' . self::htmlAttributeValueToken() . '>>[\'"]?)?';
+        } else {
+            $attribute = $name . '\s*+=\s*+(?>' . $delimiter . ')' . $matchedValue . '<<' . self::htmlAttributeValueToken() . '>>[\'"]?';
+        }
+
+        return self::prepare($attribute, $captureValue);
+    }
+
+    /**
+     * Regex token for an HTML attribute value
+     *
+     * @return string
+     * @deprecated Will be removed in 3.0
+     */
+    //language=RegExp
+    public static function htmlAttributeValueToken(): string
+    {
+        return '(?:' . self::stringValueToken() . '|' . self::htmlUnquotedAttributeValueToken() . ')';
+    }
+
+    /**
+     * Regex token for an unquoted HTML attribute value
+     *
+     * @return string
+     * @deprecated Will be removed in 3.0
+     */
+    //language=RegExp
+    public static function htmlUnquotedAttributeValueToken(): string
+    {
+        return '(?<==)[^\s*+>]++';
+    }
+
+    /**
+     * Regex token for a self closing HTML element
+     *
+     * @param string $element Name of element
+     *
+     * @return string
+     * @deprecated Will be removed in 3.0
+     */
+    public static function htmlSelfClosingElementToken(string $element = ''): string
+    {
+        return self::htmlElementToken($element, true);
+    }
+
     public static function htmlAttributeToken(): string
     {
         $ds = self::doubleQuoteStringToken();
