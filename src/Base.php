@@ -93,6 +93,7 @@ trait Base
      * @param bool $shouldCaptureValue Whether value should be captured in a capture group
      *
      * @return string
+     * @deprecated Will be removed in 3.0
      */
     //language=RegExp
     public static function stringWithCaptureValueToken(bool $shouldCaptureValue = false): string
@@ -106,6 +107,7 @@ trait Base
      * Regex token for the value of a string regardless of which quotes are used
      *
      * @return string
+     * @deprecated Will be removed in 3.0
      */
     //language=RegExp
     public static function stringValueToken(): string
