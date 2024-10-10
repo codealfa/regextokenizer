@@ -101,7 +101,7 @@ trait Html
         bool $captureDelimiter = false,
         string $matchedValue = ''
     ): string {
-        $name = $attrName != '' ? $attrName : '[^\s/"\'=<>]++';
+        $name = $attrName != '' ? $attrName : '[^\s/"\'=>]++';
         $delimiter = $captureDelimiter ? '([\'"]?)' : '[\'"]?';
 
         //If we don't need to match a value then the value of attribute is optional
@@ -157,7 +157,7 @@ trait Html
         $ss = self::singleQuoteStringToken();
         $bs = self::backTickStringToken();
 
-        return "[^\s/\"'=<>`]++(?:\s*+=\s*+(?>{$ds}|{$ss}|{$bs}|(?<==)[^\s<>'\"`]++))?";
+        return "[^\s/\"'=>`]++(?:\s*+=\s*+(?>{$ds}|{$ss}|{$bs}|(?<==)[^\s>'\"`]++))?";
     }
 
     public static function htmlAttributesListToken(): string
