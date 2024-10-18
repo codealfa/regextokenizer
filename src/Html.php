@@ -148,7 +148,7 @@ trait Html
      */
     public static function htmlSelfClosingElementToken(string $element = ''): string
     {
-        return self::htmlElementToken($element, true);
+        return self::htmlElementToken($element);
     }
 
     public static function htmlAttributeToken(): string
