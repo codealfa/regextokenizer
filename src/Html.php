@@ -22,7 +22,7 @@ trait Html
     //language=RegExp
     public static function htmlCommentToken(): string
     {
-        return '<!--(?>[^-]++|\-++)*?--!?>';
+        return '<!--(?>[^>!]++|[!>]++)*?(?<=--)!?>';
     }
 
     //language=RegExp
