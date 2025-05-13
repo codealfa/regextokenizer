@@ -139,7 +139,7 @@ trait Css
 
         $name = $name ?? '[a-zA-Z-]++';
 
-        return "@{$name}\s(?>[^{}@/\\\\'\"u;]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|{$url}|[/u])++;";
+        return "@{$name}\s*+(?>[^{}@/\\\\'\"u;]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|{$url}|[/u])++;";
     }
 
     public static function cssBlockToken(): string
