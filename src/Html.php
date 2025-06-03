@@ -66,7 +66,7 @@ trait Html
     }
 
     //language=RegExp
-    public static function htmlGenericElementToken(): string
+    public static function htmlGenericElementNameToken(): string
     {
         return '[a-zA-Z0-9-]++';
     }
@@ -169,7 +169,7 @@ trait Html
 
     public static function htmlStartTagToken(string $name = null): string
     {
-        $element = $name ?? self::htmlGenericElementToken();
+        $element = $name ?? self::htmlGenericElementNameToken();
         $attributes = self::htmlAttributesListToken();
         $gName = self::$cgName . ++self::$cgIndex;
 
@@ -193,6 +193,8 @@ trait Html
     public static function htmlStringToken(array $excludes = []): string
     {
         $c = self::htmlCommentToken();
+        $e = self::htmlGenericStartTagToken();
+
         $ex = '';
 
         if ($excludes !== []) {
@@ -200,6 +202,14 @@ trait Html
             $ex = "|$excludedElements";
         }
 
-        return "(?>[^<]++|{$c}{$ex}|<)*";
+        return "(?>[^<]++|{$c}{$ex}|{$e}|<)*";
+    }
+
+    public static function htmlGenericStartTagToken(): string
+    {
+        $name = self::htmlGenericElementNameToken();
+        $attributes = self::htmlAttributesListToken();
+
+        return "<{$name}\b(\s++{$attributes}+)?/?>";
     }
 }
