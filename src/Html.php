@@ -53,7 +53,7 @@ trait Html
         $element = $name ?? '(?:area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)';
         $attributes = self::htmlAttributesListToken();
 
-        return "<{$element}\b(\s++{$attributes}+)?/?>";
+        return "<{$element}\b(?:\s++{$attributes}+)?/?>";
     }
 
     //language=RegExp
@@ -173,7 +173,7 @@ trait Html
         $attributes = self::htmlAttributesListToken();
         $gName = self::$cgName . ++self::$cgIndex;
 
-        return "<(?<{$gName}>{$element})\b(\s++{$attributes}+)?>";
+        return "<(?<{$gName}>{$element})\b(?:\s++{$attributes}+)?>";
     }
 
     public static function htmlEndTagToken(string $name = null): string
@@ -210,6 +210,6 @@ trait Html
         $name = self::htmlGenericElementNameToken();
         $attributes = self::htmlAttributesListToken();
 
-        return "<{$name}\b(\s++{$attributes}+)?/?>";
+        return "<{$name}\b(?:\s++{$attributes}+)?/?>";
     }
 }
