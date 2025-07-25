@@ -26,6 +26,12 @@ trait Html
     }
 
     //language=RegExp
+    public static function htmlIECommentToken(): string
+    {
+        return '<!--\[[^]]*+\](?>[^<]++|<)*?<!\[[^]]*+\]-->';
+    }
+
+    //language=RegExp
     public static function htmlElementsToken(array $elements, bool $voidElements = false): string
     {
         $result = [];
