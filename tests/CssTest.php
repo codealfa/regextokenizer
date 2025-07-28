@@ -22,7 +22,7 @@ class CssTest extends TestCase
 {
     use Css;
 
-    public function cssSelectorListData(): array
+    public static function cssSelectorListData(): array
     {
         return [
             '.class' => [
@@ -175,6 +175,9 @@ class CssTest extends TestCase
 
     /**
      * @dataProvider cssSelectorListData
+     * @param $cssRule
+     * @param $selector
+     * @param $message
      */
     public function testCssSelectorsListToken($cssRule, $selector, $message): void
     {
@@ -184,7 +187,7 @@ class CssTest extends TestCase
         $this->assertEquals($selector, $matches[0], $message);
     }
 
-    public function cssDeclarationsListData(): array
+    public static function cssDeclarationsListData(): array
     {
         return [
             [
@@ -272,6 +275,9 @@ shape-image-threshold: 0.7;',
 
     /**
      * @dataProvider cssDeclarationsListData
+     * @param $cssRule
+     * @param $declaration
+     * @param $message
      */
     public function testCssDeclarationListToken($cssRule, $declaration, $message): void
     {
@@ -281,7 +287,7 @@ shape-image-threshold: 0.7;',
         $this->assertEquals($declaration, $matches[0], $message);
     }
 
-    public function cssRuleData(): array
+    public static function cssRuleData(): array
     {
         return [
             [
@@ -315,7 +321,7 @@ label {
     }
 }
 CSS,
-                'message' => 'nesting CSS rule'
+            'message' => 'nesting CSS rule'
 
             ]
         ];
@@ -332,7 +338,7 @@ CSS,
         $this->assertEquals($cssRule, $matches[0], $message);
     }
 
-    public function cssRulesTokenData(): array
+    public static function cssRulesTokenData(): array
     {
         return [
             [
@@ -499,7 +505,7 @@ textarea {
 }',
                 'message' => 'media'
             ],
-           'supports' => [
+            'supports' => [
                'css' => /** @lang CSS */ '@supports (display: flex) {
   @media screen and (min-width: 900px) {
     article {
@@ -517,7 +523,7 @@ textarea {
   }
 }',
                 'message' => 'scope'
-           ],
+            ],
             'starting-style' => [
                 'css' => /** @lang CSS */ '@starting-style {
   [popover]:popover-open {
