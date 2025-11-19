@@ -22,7 +22,7 @@ trait Html
     //language=RegExp
     public static function htmlCommentToken(): string
     {
-        return '<!--(?>[^>!]++|[!>]++)*?(?<=--)!?>';
+        return '<!--(?>[^-]++|-)*?--!?>';
     }
 
     //language=RegExp
@@ -191,7 +191,7 @@ trait Html
     {
         $et = self::htmlEndTagToken($name);
 
-        return "(?>[^<]++|(?!$et})<)*";
+        return "(?>[^<]++|(?!{$et})<)*";
     }
 
     public static function htmlStringToken(array $excludes = []): string

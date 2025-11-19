@@ -19,6 +19,7 @@ trait Css
     {
         return "\\\\[0-9a-fA-F]++\s?|\\\\[^0-9a-fA-F\r\n]";
     }
+
     //language=RegExp
     public static function cssIdentToken(): string
     {
@@ -27,10 +28,10 @@ trait Css
         return "(?>{$esc}|[a-zA-Z0-9_-]++)++";
     }
 
-     /**
+    /**
      * Regex token for a CSS url, optionally capturing the value in a capture group
      *
-     * @param   bool  $shouldCaptureValue Whether to capture the value in a capture group
+     * @param bool $shouldCaptureValue Whether to capture the value in a capture group
      *
      * @return string
      * @deprecated Will be removed in 3.0
@@ -110,7 +111,7 @@ trait Css
         $nestingRule = self::cssBlockToken();
 
         return "(?<={)(?>(?>[^{}@/\\\\'\"u]++|{$bc}|{$dqStr}|{$sqStr}|{$esc}|{$url}|[/\\\\u]++|(?<={)(?=}))++"
-        . "|{$nestingAtRule}|$nestingRule)++(?=})";
+            . "|{$nestingAtRule}|$nestingRule)++(?=})";
     }
 
     public static function cssRuleToken(): string
