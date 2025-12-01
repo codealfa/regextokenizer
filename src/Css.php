@@ -122,6 +122,14 @@ trait Css
         return "{$selectors}{$cssBlock}";
     }
 
+    public static function cssRuleMatchToken(): string
+    {
+        $selectors = self::cssSelectorListToken();
+        $declarations = self::cssDeclarationListToken();
+
+        return "(?<selectorList>{$selectors}){(?<declarationList>{$declarations})}";
+    }
+
     public static function cssRuleListToken(): string
     {
         $cssRule = self::cssRuleToken();
@@ -169,6 +177,21 @@ trait Css
 
         //language=RegExp
         return "@(?:-[^-]++-)?{$name}\s*+(?>[^{}@/\\\\'\"u;]++|{$esc}|{$bc}|{$dqStr}|{$sqStr}|{$url}|[/u])*+$cssBlock";
+    }
+
+    public static function cssNestingAtRulesMatchToken(): string
+    {
+        $esc = self::cssEscapedString();
+        $dqStr = self::doubleQuoteStringToken();
+        $sqStr = self::singleQuoteStringToken();
+        $bc = self::blockCommentToken();
+        $url = self::cssUrlToken();
+
+        return "@(?<vendor>(?:-[^-]++-)?)(?<identifier>[a-zA-Z-]++)\s*+"
+            . "(?<rule>(?>[^{}@/\\\\'\";\su]++|{$bc}|{$esc}|{$dqStr}|{$sqStr}|{$url}|[/u]|\s++)*?)\s*+"
+            . "(?P<cssBlock>{"
+            . "(?<cssRuleList>(?>(?:[^{}/\\\\'\"]++|{$bc}|{$esc}|{$dqStr}|{$sqStr}|/)++|(?&cssBlock))*+)"
+            . "})";
     }
 
     public static function cssStringToken(): string
