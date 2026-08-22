@@ -77,6 +77,18 @@ trait Html
     }
 
     /**
+     * Regex token for a generic HTML element name.
+     *
+     * @return string
+     * @deprecated Will be removed in 3.0
+     */
+    //language=RegExp
+    public static function htmlGenericElementToken(): string
+    {
+        return self::htmlGenericElementNameToken();
+    }
+
+    /**
      * Regex for parsing an HTML attribute
      *
      * @return string

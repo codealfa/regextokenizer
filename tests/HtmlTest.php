@@ -161,6 +161,11 @@ class HtmlTest extends TestCase
         $this->assertEquals($html, $matches[0], 'nested elements');
     }
 
+    public function testHtmlGenericElementTokenIsCompatibleAlias(): void
+    {
+        $this->assertSame(self::htmlGenericElementNameToken(), self::htmlGenericElementToken());
+    }
+
     public function testHtmlStringToken(): void
     {
         $html = '<!DOCTYPE html><html><head><title></title></head><body class=""></body></html>';

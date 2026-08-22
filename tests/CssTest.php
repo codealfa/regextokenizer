@@ -664,7 +664,7 @@ textarea {
         $this->assertEquals($css, $matches[0], $name . '.css');
 
         $cssMin = $this->getCssMin($name);
-        preg_match("#{$cssStringRegex}#ix", $cssMin, $matches);
+        preg_match("#^{$cssStringRegex}+$#ix", $cssMin, $matches);
         $this->assertEquals($cssMin, $matches[0], $name . '.min.css');
     }
 
