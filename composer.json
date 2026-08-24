@@ -26,5 +26,10 @@
     "psr-4": {
       "CodeAlfa\\RegexTokenizer\\Tests\\": "tests"
     }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-development": "3.0.x-dev"
+    }
   }
 }
