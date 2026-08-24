@@ -2,6 +2,7 @@
   "name": "codealfa/regextokenizer",
   "description": "A collection of regex tokens for use with Regex Parsing.",
   "minimum-stability": "dev",
+  "prefer-stable": true,
   "license": "GPL-3.0-or-later",
   "authors": [
     {
@@ -10,7 +11,7 @@
     }
   ],
   "require": {
-    "php": ">=7.0",
+    "php": ">=8.2",
     "psr/log": "^1"
   },
   "autoload": {
@@ -19,7 +20,7 @@
     }
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.6"
+    "phpunit/phpunit": "^11.5"
   },
   "autoload-dev": {
     "psr-4": {

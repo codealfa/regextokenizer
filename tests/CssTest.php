@@ -14,6 +14,7 @@
 namespace CodeAlfa\RegexTokenizer\Tests;
 
 use CodeAlfa\RegexTokenizer\Css;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function preg_match;
@@ -173,12 +174,7 @@ class CssTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider cssSelectorListData
-     * @param $cssRule
-     * @param $selector
-     * @param $message
-     */
+    #[DataProvider('cssSelectorListData')]
     public function testCssSelectorsListToken($cssRule, $selector, $message): void
     {
         $selectorsList = self::cssSelectorListToken();
@@ -273,12 +269,7 @@ shape-image-threshold: 0.7;',
         ];
     }
 
-    /**
-     * @dataProvider cssDeclarationsListData
-     * @param $cssRule
-     * @param $declaration
-     * @param $message
-     */
+    #[DataProvider('cssDeclarationsListData')]
     public function testCssDeclarationListToken($cssRule, $declaration, $message): void
     {
         $declarationsList = self::cssDeclarationListToken();
@@ -313,7 +304,7 @@ input[type="search"]::-webkit-search-cancel-button {
                 'message' => 'attr'
             ],
             [
-                'nesting Css rule' => <<<CSS
+                'cssRule' => <<<CSS
 label {
     font-family: system-ui; 
     input {
@@ -327,9 +318,7 @@ CSS,
         ];
     }
 
-    /**
-     * @dataProvider cssRuleData
-     */
+    #[DataProvider('cssRuleData')]
     public function testCssRuleToken($cssRule, $message)
     {
         $cssRuleRegex = self::cssRuleToken();
@@ -424,9 +413,7 @@ textarea {
         ];
     }
 
-    /**
-     * @dataProvider cssRulesTokenData
-     */
+    #[DataProvider('cssRulesTokenData')]
     public function testCssRulesToken(string $cssRules, string $message): void
     {
         $cssRulesListRegex = self::cssRuleListToken();
@@ -436,7 +423,7 @@ textarea {
         $this->assertEquals($cssRules, $matches[0], $message);
     }
 
-    public function cssRegularAtRulesData(): array
+    public static function cssRegularAtRulesData(): array
     {
         return [
             'import' => [
@@ -453,9 +440,7 @@ textarea {
             ]
         ];
     }
-    /**
-     * @dataProvider cssRegularAtRulesData
-     */
+    #[DataProvider('cssRegularAtRulesData')]
     public function testCssRegularAtRulesToken(string $css, string $message): void
     {
         $atRulesRegex = self::cssRegularAtRulesToken();
@@ -494,7 +479,7 @@ textarea {
         );
     }
 
-    public function cssNestedAtRulesData(): array
+    public static function cssNestedAtRulesData(): array
     {
         return [
             'media' => [
@@ -531,7 +516,7 @@ textarea {
     transform: scaleX(0);
   }
 }',
-                'starting-style'
+                'message' => 'starting-style'
             ],
             'document' => [
                 'css' => /** @lang CSS */ '@document url(https://www.example.com/page@2/)
@@ -540,7 +525,7 @@ textarea {
     color: green;
   }
 }',
-                'document'
+                'message' => 'document'
             ],
             'page' => [
                 'css' => /** @lang CSS */ '@page :right {
@@ -609,9 +594,7 @@ textarea {
         ];
     }
 
-    /**
-     * @dataProvider cssNestedAtRulesData
-     */
+    #[DataProvider('cssNestedAtRulesData')]
     public function testCssNestedAtRulesToken(string $css, string $message): void
     {
         $atRulesRegex = self::cssNestingAtRulesToken();
@@ -625,7 +608,7 @@ textarea {
         $this->assertEquals($css, $matches[0], $message . '_named');
     }
 
-    public function cssStringData(): array
+    public static function cssStringData(): array
     {
         return [
             'bootstrap' => [
@@ -652,9 +635,7 @@ textarea {
         ];
     }
 
-    /**
-     * @dataProvider cssStringData
-     */
+    #[DataProvider('cssStringData')]
     public function testCssStringToken(string $name): void
     {
         $cssStringRegex = self::cssStringToken();

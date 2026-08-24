@@ -14,6 +14,7 @@
 namespace CodeAlfa\RegexTokenizer\Tests;
 
 use CodeAlfa\RegexTokenizer\Html;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function preg_match;
@@ -35,7 +36,7 @@ class HtmlTest extends TestCase
         $this->assertEquals($string, $matches[0], 'html comment');
     }
 
-    public function htmlAttributeData(): array
+    public static function htmlAttributeData(): array
     {
         return [
             [
@@ -61,9 +62,7 @@ class HtmlTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider htmlAttributeData
-     */
+    #[DataProvider('htmlAttributeData')]
     public function testHtmlAttributeToken(string $attribute, string $message): void
     {
         $a = self::htmlAttributeToken();
@@ -81,7 +80,7 @@ class HtmlTest extends TestCase
         $this->assertEquals($attributes, $matches[0], 'attributes list');
     }
 
-    public function htmlStartTagData(): array
+    public static function htmlStartTagData(): array
     {
         return [
             [
@@ -107,9 +106,7 @@ class HtmlTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider htmlStartTagData
-     */
+    #[DataProvider('htmlStartTagData')]
     public function testHtmlStartTagToken(string $tag, string $message): void
     {
         $start = self::htmlStartTagToken();
@@ -117,7 +114,7 @@ class HtmlTest extends TestCase
         $this->assertEquals($tag, $matches[0], $message);
     }
 
-    public function htmlElementTokenData(): array
+    public static function htmlElementTokenData(): array
     {
         return [
             [
@@ -141,9 +138,7 @@ class HtmlTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider htmlElementTokenData
-     */
+    #[DataProvider('htmlElementTokenData')]
     public function testHtmlElementToken(string $tag, ?string $name, ?bool $voidElement, string $message): void
     {
         $el = $voidElement ? self::htmlVoidElementToken($name) : self::htmlElementToken($name);

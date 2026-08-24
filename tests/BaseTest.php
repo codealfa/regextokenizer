@@ -14,6 +14,7 @@
 namespace CodeAlfa\RegexTokenizer\Tests;
 
 use CodeAlfa\RegexTokenizer\Base;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function preg_match;
@@ -22,7 +23,7 @@ class BaseTest extends TestCase
 {
     use Base;
 
-    public function doubleStringData(): array
+    public static function doubleStringData(): array
     {
         return [
             'normal string' => [
@@ -53,9 +54,7 @@ class BaseTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider doubleStringData
-     */
+    #[DataProvider('doubleStringData')]
     public function testDoubleQuoteString(string $string, string $message): void
     {
         $ds = self::doubleQuoteStringToken();
@@ -65,7 +64,7 @@ class BaseTest extends TestCase
         $this->assertEquals($string, $matches[0], $message);
     }
 
-    public function singleQuoteStringData(): array
+    public static function singleQuoteStringData(): array
     {
         return [
             'normal string' => [
@@ -96,9 +95,7 @@ class BaseTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider singleQuoteStringData
-     */
+    #[DataProvider('singleQuoteStringData')]
     public function testSingleQuoteString(string $string, string $message): void
     {
         $ss = self::singleQuoteStringToken();
@@ -108,7 +105,7 @@ class BaseTest extends TestCase
         $this->assertEquals($string, $matches[0], $message);
     }
 
-    public function backTickStringData(): array
+    public static function backTickStringData(): array
     {
         return [
             'normal string' => [
@@ -139,9 +136,7 @@ class BaseTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider backTickStringData
-     */
+    #[DataProvider('backTickStringData')]
     public function testBackTickQuoteString(string $string, string $message): void
     {
         $bs = self::backTickStringToken();
@@ -151,7 +146,7 @@ class BaseTest extends TestCase
         $this->assertEquals($string, $matches[0], $message);
     }
 
-    public function blockCommentData(): array
+    public static function blockCommentData(): array
     {
         return [
             'normal comment' => [
@@ -176,9 +171,7 @@ class BaseTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider blockCommentData
-     */
+    #[DataProvider('blockCommentData')]
     public function testBlockComment(string $comment, $message): void
     {
         $bc = self::blockCommentToken();
