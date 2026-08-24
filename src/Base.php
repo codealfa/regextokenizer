@@ -11,12 +11,12 @@
 
 namespace CodeAlfa\RegexTokenizer;
 
-use CodeAlfa\RegexTokenizer\Debug\Debug;
+use CodeAlfa\RegexTokenizer\Debug\Profiler;
 use Exception;
 
 trait Base
 {
-    use Debug;
+    use Profiler;
 
     /**
      * Regex token for a string inside double quotes

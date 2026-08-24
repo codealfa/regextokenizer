@@ -16,12 +16,80 @@ namespace CodeAlfa\RegexTokenizer\Tests;
 use CodeAlfa\RegexTokenizer\Base;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\AbstractLogger;
 
 use function preg_match;
+
+final class RecordingLogger extends AbstractLogger
+{
+    public array $records = [];
+
+    public function log($level, $message, array $context = []): void
+    {
+        $this->records[] = [
+            'level' => $level,
+            'message' => $message,
+            'context' => $context,
+        ];
+    }
+}
 
 class BaseTest extends TestCase
 {
     use Base;
+
+    public function enableProfiler(): void
+    {
+        $this->profilerEnabled = true;
+        $this->profilerThresholdMs = 0.0;
+    }
+
+    public function recordProfile(string $regex, string $code, int|string $regexNum): void
+    {
+        $this->profileRegex($regex, $code, $regexNum);
+    }
+
+    public function resetProfile(): void
+    {
+        $this->resetProfiler();
+    }
+
+    public function testProfilerIsDisabledByDefault(): void
+    {
+        $logger = new RecordingLogger();
+        $this->setLogger($logger);
+
+        $this->recordProfile('regex', 'code', 'disabled');
+
+        $this->assertSame([], $logger->records);
+    }
+
+    public function testProfilerLogsRegexMeasurements(): void
+    {
+        $logger = new RecordingLogger();
+        $this->setLogger($logger);
+        $this->enableProfiler();
+
+        $this->recordProfile('regex', 'code', 'test');
+        $this->recordProfile('regex', 'code', 'test');
+
+        $this->assertCount(3, $logger->records);
+        $this->assertSame('test', $logger->records[0]['context']['regex_num']);
+    }
+
+    public function testProfilerCanBeReset(): void
+    {
+        $logger = new RecordingLogger();
+        $this->setLogger($logger);
+        $this->enableProfiler();
+
+        $this->recordProfile('regex', 'code', 'before-reset');
+        $this->recordProfile('regex', 'code', 'before-reset');
+        $this->resetProfile();
+        $this->recordProfile('regex', 'code', 'after-reset');
+
+        $this->assertCount(3, $logger->records);
+    }
 
     public static function doubleStringData(): array
     {
