@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @package   codealfa/regextokenizer
  * @author    Samuel Marshall <sdmarshall73@gmail.com>
@@ -30,12 +32,6 @@ trait Debug
     public $_limit = 10.0;
     public $_printCode = true;
 
-    /**
-     * @param string $regex
-     * @param string $code
-     * @param mixed $regexNum
-     * @return void
-     */
     public function _debug(string $regex, string $code, $regexNum = 0): void
     {
         if (!$this->_debug) {

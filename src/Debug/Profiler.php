@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  *  @package   codealfa/regextokenizer
  *  @author    Samuel Marshall <sdmarshall73@gmail.com>
@@ -12,7 +14,6 @@
 namespace CodeAlfa\RegexTokenizer\Debug;
 
 use Psr\Log\LoggerAwareTrait;
-use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 trait Profiler
@@ -44,13 +45,7 @@ trait Profiler
      */
     private ?float $profilerPrevStamp = null;
 
-    /**
-     * Record a profiling tick. Measures time since previous tick.
-     *
-     * @param string         $regex
-     * @param string         $code
-     * @param int|string     $regexNum  Arbitrary identifier (e.g., counter)
-     */
+    /** Record a profiling tick; regexNum is an arbitrary identifier. */
     protected function profileRegex(string $regex, string $code, int|string $regexNum = 0): void
     {
         if (!$this->profilerEnabled) {
@@ -61,7 +56,6 @@ trait Profiler
             $this->setLogger(new NullLogger());
         }
 
-        /** @var LoggerInterface $logger */
         $logger = $this->logger;
 
         $now = microtime(true);

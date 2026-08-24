@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @package   codealfa/regextokenizer
  * @author    Samuel Marshall <sdmarshall73@gmail.com>
@@ -26,46 +28,6 @@ trait Css
         $esc = self::cssEscapedString();
 
         return "(?>{$esc}|[a-zA-Z0-9_-]++)++";
-    }
-
-    /**
-     * Regex token for a CSS url, optionally capturing the value in a capture group
-     *
-     * @param bool $shouldCaptureValue Whether to capture the value in a capture group
-     *
-     * @return string
-     * @deprecated Will be removed in 3.0
-     */
-    //language=RegExp
-    public static function cssUrlWithCaptureValueToken(bool $shouldCaptureValue = false): string
-    {
-        $cssUrl = '(?:url\(|(?<=url)\()(?:\s*+[\'"])?<<' . self::cssUrlValueToken() . '>>(?:[\'"]\s*+)?\)';
-
-        return self::prepare($cssUrl, $shouldCaptureValue);
-    }
-
-    /**
-     * Regex token for a CSS url value
-     *
-     * @return string
-     * @deprecated Will be removed in 3.0
-     */
-    //language=RegExp
-    public static function cssUrlValueToken(): string
-    {
-        return '(?:' . self::stringValueToken() . '|' . self::cssUnquotedUrlValueToken() . ')';
-    }
-
-    /**
-     * Regex token for an unquoted CSS url value
-     *
-     * @return string
-     * @deprecated Will be removed in 3.0
-     */
-    //language=RegExp
-    public static function cssUnquotedUrlValueToken(): string
-    {
-        return '(?<=url\()(?>\s*+(?:\\\\.)?[^\\\\()\s\'"]*+)++';
     }
 
     public static function cssUrlToken(): string
